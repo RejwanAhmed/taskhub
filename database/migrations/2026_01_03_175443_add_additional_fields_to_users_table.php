@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('avatar')->nullable();
-            $table->text('bio')->nullable();
-            $table->string('timezone', 50)->default('UTC');
+            $table->foreignId('current_organization_id')->nullable()->after('id')->constrained('organizations')->onDelete('set null');
+            $table->string('avatar')->nullable()->after('remember_token');
+            $table->text('bio')->nullable()->after('avatar');
+            $table->string('timezone', 50)->default('UTC')->after('bio');
         });
     }
 

@@ -42,20 +42,20 @@ php artisan db:show
 ---
 
 ### Step 2.2: Eloquent Models
-- [ ] User model with relationships
-- [ ] Organization model with relationships
-- [ ] Project model with relationships
-- [ ] Task model with relationships
-- [ ] Comment model (polymorphic)
-- [ ] Attachment model (polymorphic)
-- [ ] Tag model
-- [ ] Notification model
-- [ ] ActivityLog model
-- [ ] Invitation model
+- [✅] User model with relationships
+- [✅] Organization model with relationships
+- [✅] Project model with relationships
+- [✅] Task model with relationships
+- [✅] Comment model (polymorphic)
+- [✅] Attachment model (polymorphic)
+- [✅] Tag model
+- [✅] Notification model
+- [✅] ActivityLog model
+- [✅] Invitation model
 
 **Model Traits:**
-- [ ] BelongsToOrganization trait
-- [ ] HasActivityLog trait
+- [✅] BelongsToOrganization trait
+- [✅] HasActivityLog trait
 - [ ] Searchable trait (if needed)
 
 **Commands to verify:**
