@@ -18,6 +18,11 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('description')->nullable();
             $table->json('settings')->nullable();
+
+            $table->enum('status', ['pending', 'active', 'suspended', 'rejected'])->default('pending');
+            $table->timestamp('approved_at')->nullable();
+            $table->foreignId('approved_by')->nullable()->constrained('users');
+            
             $table->timestamps();
 
             $table->index('created_at');
