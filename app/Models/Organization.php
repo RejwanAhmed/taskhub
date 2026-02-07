@@ -9,7 +9,7 @@ class Organization extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'logo', 'description', 'settings'];
+    protected $fillable = ['name', 'slug', 'logo', 'description', 'settings', 'status', 'approved_at', 'approved_by'];
 
     protected $casts = [
         'settings' => 'array',
@@ -18,8 +18,7 @@ class Organization extends Model
     public function members()
     {
         return $this->belongsToMany(User::class, 'organization_user')
-            ->withPivot('role', 'joined_at')
-            ->withTimestamps();
+            ->withPivot('role', 'joined_at');
     }
 
     public function projects()
