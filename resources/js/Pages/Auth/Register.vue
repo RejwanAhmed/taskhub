@@ -72,7 +72,7 @@ const submit = () => {
 
                             <!-- Submit -->
                             <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary" :disabled="form.processing">
+                                <button type="submit" class="btn btn-primary bg-teal border-0" :disabled="form.processing">
                                     Register
                                 </button>
                             </div>
