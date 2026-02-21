@@ -3,6 +3,7 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 
 const form = useForm({
+    organization_name: "",
     name: "",
     email: "",
     password: "",
@@ -30,9 +31,19 @@ const submit = () => {
                         </h3>
 
                         <form @submit.prevent="submit" novalidate>
+
                             <!-- Name -->
                             <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
+                                <label for="organization_name" class="form-label">Organization Name</label>
+                                <input type="text" id="organization_name" class="form-control" v-model="form.organization_name" required autofocus autocomplete="organization_name" />
+                                <div v-if="form.errors.organization_name" class="text-danger small mt-1">
+                                    {{ form.errors.organization_name }}
+                                </div>
+                            </div>
+
+                            <!-- Name -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">User Name</label>
                                 <input type="text" id="name" class="form-control" v-model="form.name" required autofocus
                                     autocomplete="name" />
                                 <div v-if="form.errors.name" class="text-danger small mt-1">
