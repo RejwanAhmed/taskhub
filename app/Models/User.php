@@ -28,6 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'bio',
         'timezone',
+        'current_organization_id',
     ];
 
     /**
@@ -76,6 +77,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Organization::class, 'organization_user')
             ->withPivot('role', 'joined_at')
             ->withTimestamps();
+    }
+
+    public function currentOrganization()
+    {
+        return $this->belongsTo(Organization::class, 'current_organization_id');
     }
 
     public function projects()
