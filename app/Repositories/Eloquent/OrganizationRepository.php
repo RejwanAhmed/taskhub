@@ -20,6 +20,18 @@ class OrganizationRepository implements OrganizationRepositoryInterface
     {
         $organizations= $user->organizations()->withCount('members')->withCount('tasks')->get();
         return $organizations;
-        // $organizations = $this->model->members()
+    }
+
+    public function create($validatedData)
+    {
+        return $this->model::create($validatedData);
+    }
+
+    public function attachOwner($organization, $userId)
+    {
+        $organization->members()->attach($userId, [
+            'joined_at' => now(),
+            'role' => 'owner'
+        ]);
     }
 }

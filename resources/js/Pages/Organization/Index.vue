@@ -72,6 +72,9 @@
             </div>
         </div>
 
+        <div v-if="showModal" class="modal d-block modal-background">
+            <CreateOrganizationModal :showModal="showModal" @close="showModal = false"></CreateOrganizationModal>
+        </div>
         <!-- Create / Edit Modal -->
         <!-- <div v-if="showModal" class="modal d-block" style="background: rgba(0,0,0,0.4);">
             <div class="modal-dialog modal-dialog-centered">
@@ -128,6 +131,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import CreateOrganizationModal from './Modal/CreateOrganizationModal.vue';
 
 const props = defineProps({
     organizations: Object,
@@ -145,6 +149,10 @@ const statusColor = (status: string) => {
     };
     return colors[status as keyof typeof colors] || 'bg-secondary';
 };
+
+const eventHandler = () => {
+    showModal.value = false
+}
 </script>
 
 <style scoped>
