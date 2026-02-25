@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Constants\Constants;
 use App\Http\Requests\Organization\CreateOrganizationRequest;
+use App\Http\Requests\Organization\UpdateOrganizationRequest;
+use App\Models\Organization;
 use App\Services\OrganizationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -33,6 +35,15 @@ class OrganizationController extends Controller
         $organization = $this->organizationService->createOrganization($validatedData);
         $status = $organization ? Constants::SUCCESS : Constants::ERROR;
         $message = $organization ? 'New Organization Created Successfully' : 'New Organization Could Not Be Created';
+        return Redirect::route('organizations.index')->with($status, $message);
+    }
+
+    public function update(UpdateOrganizationRequest $request, Organization $organization)
+    {
+        $validatedData = $request->validated();
+        $ogranization = $this->organizationService->updateOrganization($organization, $validatedData);
+        $status = $ogranization ? Constants::SUCCESS : Constants::ERROR;
+        $message = $ogranization ? 'Organization Updated Successfully' : 'Organization Could Not Be Updated';
         return Redirect::route('organizations.index')->with($status, $message);
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Contracts;
 
+use App\Models\Organization;
+
 interface OrganizationRepositoryInterface
 {
     // Define your methods here
@@ -9,4 +11,5 @@ interface OrganizationRepositoryInterface
     public function getUserOrganizations($user);
     public function create($validatedData);
     public function attachOwner($organization, $userId);
+    public function update(Organization $organization, $validatedData);
 }
