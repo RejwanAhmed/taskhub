@@ -50,4 +50,15 @@ class OrganizationService extends BaseModelService
             return null;
         }
     }
+
+    public function updateOrganization(Organization $organization, $validatedData)
+    {
+        try {
+            $organization = $this->organizationRepo->update($organization, $validatedData);
+            return $organization;
+        } catch(\Exception $e) {
+            \Log::error($e->getMessage());
+            return null;
+        }
+    }
 }

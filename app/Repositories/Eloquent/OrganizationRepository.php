@@ -34,4 +34,10 @@ class OrganizationRepository implements OrganizationRepositoryInterface
             'role' => 'owner'
         ]);
     }
+
+    public function update(Organization $organization, $validatedData)
+    {
+        $organization->update($validatedData);
+        return $organization;
+    }
 }

@@ -11,7 +11,7 @@
                 <div>
                     <small class="text-muted">Manage your organizations</small>
                 </div>
-                <button class="btn bg-teal text-white" @click="showModal = true">
+                <button class="btn bg-teal text-white" @click="openOrganizationModal">
                     <i class="bi bi-plus-lg me-1"></i> New Organization
                 </button>
             </div>
@@ -37,7 +37,7 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                                         <li>
-                                            <button class="dropdown-item" @click="showModal = true">
+                                            <button class="dropdown-item" @click="openOrganizationModal(org)">
                                                 <i class="bi bi-pencil me-2 text-teal"></i> Edit
                                             </button>
                                         </li>
@@ -73,37 +73,8 @@
         </div>
 
         <div v-if="showModal" class="modal d-block modal-background">
-            <CreateOrganizationModal :showModal="showModal" @close="showModal = false"></CreateOrganizationModal>
+            <CreateOrganizationModal :showModal="showModal" :organization="selectedOrg" @close="showModal = false"></CreateOrganizationModal>
         </div>
-        <!-- Create / Edit Modal -->
-        <!-- <div v-if="showModal" class="modal d-block" style="background: rgba(0,0,0,0.4);">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-0 rounded-4">
-                    <div class="modal-header border-bottom-0 pb-0">
-                        <h6 class="modal-title fw-bold">
-                            <i class="bi bi-building me-2 text-teal"></i> New Organization
-                        </h6>
-                        <button type="button" class="btn-close" @click="showModal = false"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold small">
-                                Organization Name <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" class="form-control" placeholder="e.g. Acme Corp" />
-                        </div>
-                        <div class="mb-1">
-                            <label class="form-label fw-semibold small">Description</label>
-                            <textarea class="form-control" rows="3" placeholder="What does this organization do?"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-top-0">
-                        <button class="btn btn-light" @click="showModal = false">Cancel</button>
-                        <button class="btn bg-teal text-white">Create</button>
-                    </div>
-                </div>
-            </div>
-        </div> -->
 
         <!-- Delete Confirm Modal -->
         <!-- <div v-if="showDeleteModal" class="modal d-block" style="background: rgba(0,0,0,0.4);">
@@ -139,6 +110,7 @@ const props = defineProps({
 
 const showModal = ref(false);
 const showDeleteModal = ref(false);
+const selectedOrg = ref();
 
 const statusColor = (status: string) => {
     const colors = {
@@ -150,9 +122,11 @@ const statusColor = (status: string) => {
     return colors[status as keyof typeof colors] || 'bg-secondary';
 };
 
-const eventHandler = () => {
-    showModal.value = false
+const openOrganizationModal = (organization: any | null) => {
+    selectedOrg.value = organization;
+    showModal.value = true;
 }
+
 </script>
 
 <style scoped>
