@@ -46,4 +46,10 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         $organization->delete();
         return true;
     }
+
+    public function switch(Organization $organization, $authUser)
+    {
+        $authUser->update(['current_organization_id' => $organization->id]);
+        return true;
+    }
 }

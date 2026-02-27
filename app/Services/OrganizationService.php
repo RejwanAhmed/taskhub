@@ -25,9 +25,9 @@ class OrganizationService extends BaseModelService
         $this->authUser = Auth::user();
     }
 
-    public function getUserOrganizations($user)
+    public function getUserOrganizations()
     {
-        return $this->organizationRepo->getUserOrganizations($user);
+        return $this->organizationRepo->getUserOrganizations($this->authUser);
     }
 
     public function createOrganization($validatedData)
@@ -66,6 +66,16 @@ class OrganizationService extends BaseModelService
     {
         try {
             return $this->organizationRepo->delete($organization);
+        } catch(\Exception $e) {
+            \Log::error($e->getMessage());
+            return false;
+        }
+    }
+
+    public function switchOrganization(Organization $organization)
+    {
+        try {
+            return $this->organizationRepo->switch($organization, $this->authUser);
         } catch(\Exception $e) {
             \Log::error($e->getMessage());
             return false;

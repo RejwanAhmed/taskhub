@@ -52,17 +52,25 @@
                             <h6 class="fw-bold mt-3 mb-1">{{ org.name }}</h6>
                             <p class="text-muted small mb-3">{{ org.description }}</p>
 
-                            <div class="d-flex gap-2">
-                                <span class="badge bg-light text-muted fw-normal">
-                                    <i class="bi bi-people me-1"></i> {{ org.members_count }} members
-                                </span>
-                                <span class="badge bg-light text-muted fw-normal">
-                                    <i class="bi bi-check2-square me-1"></i> {{ org.tasks_count }} tasks
-                                </span>
-                                <span class="badge bg-light text-muted fw-normal">
-                                    <i class="bi-person-gear me-1"></i> {{ org.pivot.role }}
-                                </span>
-                                <span class="badge fw-normal" :class="['ms-2', statusColor(org.status)]">{{ org.status }}</span>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-6">
+                                    <span class="badge bg-light text-muted fw-normal">
+                                        <i class="bi bi-people me-1"></i> {{ org.members_count }} members
+                                    </span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-6">
+                                    <span class="badge bg-light text-muted fw-normal">
+                                        <i class="bi bi-check2-square me-1"></i> {{ org.tasks_count }} tasks
+                                    </span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-6">
+                                    <span class="badge bg-light text-muted fw-normal">
+                                        <i class="bi-person-gear me-1"></i> {{ org.pivot.role }}
+                                    </span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 col-6">
+                                    <span class="badge fw-normal" :class="['ms-2', statusColor(org.status)]">{{ org.status }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
