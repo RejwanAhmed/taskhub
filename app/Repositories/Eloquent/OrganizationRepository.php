@@ -40,4 +40,10 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         $organization->update($validatedData);
         return $organization;
     }
+
+    public function delete(Organization $organization)
+    {
+        $organization->delete();
+        return true;
+    }
 }

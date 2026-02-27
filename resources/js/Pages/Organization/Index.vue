@@ -24,7 +24,7 @@
 
             <!-- Organization Cards -->
             <div class="row g-3">
-                <div v-for="org in organizations" :key="org.id" class="col-md-6 col-lg-4">
+                <div v-for="org in props?.organizations" :key="org.id" class="col-md-6 col-lg-4">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body">
                             <div class="d-flex align-items-start justify-content-between">
@@ -43,9 +43,7 @@
                                         </li>
                                         <li><hr class="dropdown-divider" /></li>
                                         <li>
-                                            <button class="dropdown-item text-danger" @click="showDeleteModal = true">
-                                                <i class="bi bi-trash me-2"></i> Delete
-                                            </button>
+                                            <DeleteConfirmationButton confirm-route="organizations.destroy" :obj="org" :delete-content="org.name"></DeleteConfirmationButton>
                                         </li>
                                     </ul>
                                 </div>
@@ -103,10 +101,11 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import CreateOrganizationModal from './Modal/CreateOrganizationModal.vue';
+import DeleteConfirmationButton from '@/Components/Button/DeleteConfirmationButton.vue';
 
-const props = defineProps({
-    organizations: Object,
-});
+const props = defineProps<{
+    organizations: Record<string, any>,
+}>();
 
 const showModal = ref(false);
 const showDeleteModal = ref(false);

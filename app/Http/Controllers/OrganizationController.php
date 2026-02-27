@@ -7,7 +7,6 @@ use App\Http\Requests\Organization\CreateOrganizationRequest;
 use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Models\Organization;
 use App\Services\OrganizationService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -47,4 +46,12 @@ class OrganizationController extends Controller
         return Redirect::route('organizations.index')->with($status, $message);
     }
 
+    // Organizations will never be deleted, so we wont need this in future.
+    public function destroy(Organization $organization)
+    {
+        $isDeleted = $this->organizationService->deleteOrganization($organization);
+        $status = $isDeleted ? Constants::SUCCESS : Constants::ERROR;
+        $message = $isDeleted ? 'Organization Deleted Successfully' : 'Organization Could Not Be Deleted';
+        return Redirect::route('organizations.index')->with($status, $message);
+    }
 }
