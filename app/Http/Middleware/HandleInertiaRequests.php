@@ -39,6 +39,9 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'message' => fn () => $request->session()->get('message'),
             ],
+            'currentOrg' => $request->user()?->currentOrganization,
+            'activeOrganizations' => $request->user()?->organizations()->where('organizations.status', 'active')->get(),
+            // dd($request->user()?->organizations()->where('organizations.status', 'active')->toSql())
         ];
     }
 }

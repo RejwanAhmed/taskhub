@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('organizations', OrganizationController::class)->except(['create', 'show', 'edit']);
+    Route::post('organizations/{organization}/switch', [OrganizationController::class, 'switchOrganization'])->name('organizations.switch');
 });
 
 require __DIR__.'/auth.php';

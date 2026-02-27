@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex vh-100">
+    <div class="d-flex vh-100 overflow-hidden" style="min-height: 100dvh;">
         <!-- Sidebar -->
         <div
             :class="['sidebar', collapsed ? 'collapsed' : 'expanded', 'bg-teal', 'd-flex', 'flex-column', 'pt-3', 'position-sticky', 'top-0', 'start-0']" style="flex-shrink: 0;">
@@ -14,39 +14,44 @@
         </div>
 
         <!-- Right side (top bar + content) -->
-        <div class="d-flex flex-column flex-grow-1">
+        <div class="d-flex flex-column flex-grow-1 overflow-hidden">
             <!-- Top bar -->
-            <nav class="navbar navbar-expand navbar-light bg-light px-3 d-flex justify-content-between"
-                style="height: 56px;">
+            <nav class="navbar navbar-expand navbar-light bg-light px-3 d-flex justify-content-between" style="height: 56px;">
                 <!-- Left: toggle button -->
                 <button class="btn btn-light" @click="toggleSidebar" aria-label="Toggle sidebar">
                     <i class="bi bi-list fs-4"></i>
                 </button>
 
-                <!-- Right: profile dropdown -->
-                <div class="dropdown">
-                    <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="userMenu"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle fs-4 me-2"></i>
-                        <span>Profile</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li>
-                            <Link class="dropdown-item" :href="route('profile.edit')">
-                            <i class="bi bi-person-lines-fill me-2"></i> Profile
-                            </Link>
-                        </li>
-                        <li>
-                            <Link class="dropdown-item" method="post" :href="route('logout')" as="button">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                            </Link>
-                        </li>
-                    </ul>
+                <!-- Right: org switcher + profile -->
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Org Switcher -->
+                    <OrganizationSwitcher></OrganizationSwitcher>
+
+                    <!-- Profile dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="userMenu"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4 me-2"></i>
+                            <span class="d-none d-sm-inline">Profile</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li>
+                                <Link class="dropdown-item" :href="route('profile.edit')">
+                                    <i class="bi bi-person-lines-fill me-2"></i> Profile
+                                </Link>
+                            </li>
+                            <li>
+                                <Link class="dropdown-item" method="post" :href="route('logout')" as="button">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
 
             <!-- Rendered content -->
-            <main class="flex-grow-1 p-3 overflow-auto">
+            <main class="flex-grow-1 p-3 overflow-auto" style="overflow-x: hidden;">
                 <header class="mb-4">
                     <slot name="header" />
                 </header>
@@ -58,9 +63,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { onMounted, onUnmounted, computed, ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import { useUiStore } from '@/Stores/ui';
+import OrganizationSwitcher from '@/Components/Button/OrganizationSwitcher.vue';
 
 const uiStore = useUiStore();
 
@@ -100,7 +106,7 @@ const menuItems = [
 
 <style scoped>
 .sidebar {
-    height: 100vh;
+    height: 100dvh;
     transition: width 0.3s ease;
 }
 

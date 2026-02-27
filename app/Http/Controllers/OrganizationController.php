@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants\Constants;
 use App\Http\Requests\Organization\CreateOrganizationRequest;
+use App\Http\Requests\Organization\SwitchOrganizationRequest;
 use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Models\Organization;
 use App\Services\OrganizationService;
@@ -21,7 +22,7 @@ class OrganizationController extends Controller
 
     public function index()
     {
-        $organizations = $this->organizationService->getUserOrganizations(auth()->user());
+        $organizations = $this->organizationService->getUserOrganizations();
         $responseData = [
             'organizations' => $organizations,
         ];
@@ -52,6 +53,14 @@ class OrganizationController extends Controller
         $isDeleted = $this->organizationService->deleteOrganization($organization);
         $status = $isDeleted ? Constants::SUCCESS : Constants::ERROR;
         $message = $isDeleted ? 'Organization Deleted Successfully' : 'Organization Could Not Be Deleted';
+        return Redirect::route('organizations.index')->with($status, $message);
+    }
+
+    public function switchOrganization(SwitchOrganizationRequest $request, Organization $organization)
+    {
+        $isSwitched = $this->organizationService->switchOrganization($organization);
+        $status = $isSwitched ? Constants::SUCCESS : Constants::ERROR;
+        $message = $isSwitched ? 'Organization Switched Successfully' : 'Organization Could Not Be Switched';
         return Redirect::route('organizations.index')->with($status, $message);
     }
 }

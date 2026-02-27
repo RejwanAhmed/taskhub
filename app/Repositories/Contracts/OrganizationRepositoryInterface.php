@@ -13,4 +13,5 @@ interface OrganizationRepositoryInterface
     public function attachOwner($organization, $userId);
     public function update(Organization $organization, $validatedData);
     public function delete(Organization $organization);
+    public function switch(Organization $organization, $authUser);
 }
