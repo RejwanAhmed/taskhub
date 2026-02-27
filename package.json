@@ -31,6 +31,7 @@
         "bootstrap": "^5.3.7",
         "bootstrap-icons": "^1.13.1",
         "pinia": "^3.0.3",
+        "sweetalert2": "^11.26.20",
         "toastr": "^2.1.4",
         "vee-validate": "^4.15.1"
     }

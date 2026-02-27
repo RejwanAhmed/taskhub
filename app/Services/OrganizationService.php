@@ -61,4 +61,14 @@ class OrganizationService extends BaseModelService
             return null;
         }
     }
+
+    public function deleteOrganization(Organization $organization)
+    {
+        try {
+            return $this->organizationRepo->delete($organization);
+        } catch(\Exception $e) {
+            \Log::error($e->getMessage());
+            return false;
+        }
+    }
 }
