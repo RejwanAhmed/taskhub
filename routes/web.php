@@ -25,7 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('organizations', OrganizationController::class)->except(['create', 'show', 'edit']);
-    Route::post('organizations/{organization}/switch', [OrganizationController::class, 'switchOrganization'])->name('organizations.switch');
+    Route::prefix('organizations')->group(function () {
+        Route::post('{organization}/switch', [OrganizationController::class, 'switchOrganization'])->name('organizations.switch');
+        Route::get('members', [OrganizationController::class, 'members'])->name('organizations.member');
+    });
 });
 
 require __DIR__.'/auth.php';

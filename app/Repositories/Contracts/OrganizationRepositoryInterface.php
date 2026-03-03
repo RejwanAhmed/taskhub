@@ -14,4 +14,5 @@ interface OrganizationRepositoryInterface
     public function update(Organization $organization, $validatedData);
     public function delete(Organization $organization);
     public function switch(Organization $organization, $authUser);
+    public function getOrganizationMembers(Organization $organization);
 }

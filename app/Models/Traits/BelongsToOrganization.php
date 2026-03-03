@@ -18,6 +18,6 @@ trait BelongsToOrganization
 
     public function organization()
     {
-        return $this->beloongsTo(Organization::class);
+        return $this->belongsTo(Organization::class);
     }
 }

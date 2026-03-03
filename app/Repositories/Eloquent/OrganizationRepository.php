@@ -52,4 +52,11 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         $authUser->update(['current_organization_id' => $organization->id]);
         return true;
     }
+
+    public function getOrganizationMembers(Organization $organization)
+    {
+        return $organization->members()
+            ->select('users.id', 'users.email', 'users.name', 'users.avatar', 'users.bio')
+            ->get();
+    }
 }

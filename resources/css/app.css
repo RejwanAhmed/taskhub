@@ -48,3 +48,15 @@ h1, h2, h3, h4, h5, h6 {
     background-color: var(--color-teal) !important;
     color: #ffffff !important;
 }
+
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}

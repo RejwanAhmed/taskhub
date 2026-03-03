@@ -63,4 +63,13 @@ class OrganizationController extends Controller
         $message = $isSwitched ? 'Organization Switched Successfully' : 'Organization Could Not Be Switched';
         return Redirect::route('organizations.index')->with($status, $message);
     }
+
+    public function members()
+    {
+        $members = $this->organizationService->getOrganizationMembers();
+        $responseData = [
+            'members' => $members,
+        ];
+        return Inertia::render('Organization/Members', $responseData);
+    }
 }

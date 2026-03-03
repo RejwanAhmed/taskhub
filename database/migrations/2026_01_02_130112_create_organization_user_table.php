@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('role',['owner', 'manager', 'member'])->default('member');
             $table->timestamp('joined_at')->useCurrent();
+            $table->enum('status', ['active', 'inactive'])->default('active');
             
             $table->unique(['organization_id', 'user_id']); // composite key -> means one user must be unique within that organization.
             $table->index('role');

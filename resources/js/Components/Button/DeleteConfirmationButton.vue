@@ -1,6 +1,10 @@
 <template>
-    <button class="dropdown-item text-danger" @click="showDeleteConfirmation">
-        <i class="bi bi-trash me-2"></i> {{ loading ? 'Deleting...' : 'Delete' }}
+    <button
+        :class="iconOnly ? 'btn text-danger' : 'dropdown-item text-danger'"
+        @click="showDeleteConfirmation"
+    >
+        <i class="bi bi-trash fs-5" :class="{ 'me-2': !iconOnly }"></i>
+        <span v-if="!iconOnly">{{ loading ? 'Deleting...' : 'Delete' }}</span>
     </button>
 </template>
 
@@ -13,6 +17,7 @@ const props = defineProps<{
     confirmRoute: string,
     obj: Record<string, any>,
     deleteContent: string,
+    iconOnly?: boolean,
 }> ()
 
 const loading = ref(false);
