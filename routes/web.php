@@ -36,4 +36,8 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::prefix('invitations')->group(function () {
+    Route::get('accept/{token}', [InvitationController::class, 'show'])->name('invitations.show');
+});
+
 require __DIR__.'/auth.php';
