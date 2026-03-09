@@ -24,8 +24,10 @@
                         </td>
                     </tr>
                     <tr v-if="paginated.length === 0">
-                        <i class="bi bi-inbox text-muted" style="font-size: 2rem;"></i>
-                        <td :colspan="columns.length" class="text-center text-muted py-4">No records found</td>
+                        <td :colspan="columns.length" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox text-muted" style="font-size: 2rem;"></i>
+                            <div>No records found</div>
+                        </td>
                     </tr>
                 </tbody>
             </table>

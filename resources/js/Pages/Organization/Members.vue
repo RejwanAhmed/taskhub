@@ -13,8 +13,8 @@
                     <Link :href="route('organizations.index')" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i> Back
                     </Link>
-                    <button class="btn bg-teal text-white">
-                        <i class="bi bi-plus-lg me-1"></i> Invite Member
+                    <button class="btn bg-teal text-white" @click="showModal = true">
+                        <i class="bi bi-person-plus me-1"></i> Invite Member
                     </button>
                 </div>
             </div>
@@ -53,19 +53,28 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="showModal" class="modal d-block modal-background">
+            <InviteMemberModal :showModal=showModal @close="showModal = false"></InviteMemberModal>
+        </div>
     </AuthenticatedLayout>
 </template>
 
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { usePage, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 import AppDataTable from '@/Components/Table/DataTable.vue';
 import DeleteConfirmationButton from '@/Components/Button/DeleteConfirmationButton.vue';
+import InviteMemberModal from './Modal/InviteMemberModal.vue';
+import { Members } from '@/types/interfaces/members';
+
 const props = defineProps<{
-    members: Record<string, any>[]
-}>();
+    members: Members[]
+}>()
+
+const showModal = ref(false);
 
 const page = usePage();
 const currentOrganization = computed(() => page.props.currentOrg as any);
