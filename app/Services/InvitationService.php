@@ -6,10 +6,12 @@ use App\Constants\Constants;
 use App\Exceptions\BusinessException;
 use App\Models\Invitation;
 use App\Models\User;
+use App\Notifications\InvitationNotification;
 use App\Repositories\Contracts\InvitationRepositoryInterface;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
 use App\Services\Core\BaseModelService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 class InvitationService extends BaseModelService
@@ -48,11 +50,14 @@ class InvitationService extends BaseModelService
 
             if ($existingInvite) {
                 $this->invitationRepo->updateInvitation($existingInvite, $data);
+                Notification::route('mail', $email)->notify(new InvitationNotification($existingInvite));
                 return Constants::RESENT;
             }
 
             $validatedData = array_merge($validatedData, $data);
-            $this->invitationRepo->createInvitation($validatedData);
+            $invitation = $this->invitationRepo->createInvitation($validatedData);
+
+            Notification::route('mail', $email)->notify(new InvitationNotification($invitation));
             
             return Constants::SENT;
         });

@@ -31,6 +31,12 @@ class Invitation extends Model
 
     // protected $appends = ['is_expired', 'is_accepted'];
 
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
     public function inviter()
     {
         return $this->belongsTo(User::class, 'invited_by');
