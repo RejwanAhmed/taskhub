@@ -59,4 +59,9 @@ class OrganizationRepository implements OrganizationRepositoryInterface
             ->select('users.id', 'users.email', 'users.name', 'users.avatar', 'users.bio')
             ->get();
     }
+
+    public function isMember(Organization $organization, $email)
+    {
+        return $organization->members()->where('email', $email)->exists();
+    }
 }

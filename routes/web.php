@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -28,6 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('organizations')->group(function () {
         Route::post('{organization}/switch', [OrganizationController::class, 'switchOrganization'])->name('organizations.switch');
         Route::get('members', [OrganizationController::class, 'members'])->name('organizations.member');
+    });
+
+    Route::prefix('invitations')->group(function () {
+        Route::post('/', [InvitationController::class, 'store'])->name('invitations.store');
     });
 });
 

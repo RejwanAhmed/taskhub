@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Traits\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Invitation extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToOrganization;
+    
+    public $timestamps = false;
 
      protected $fillable = [
         'organization_id',
@@ -17,6 +20,7 @@ class Invitation extends Model
         'invited_by',
         'accepted_at',
         'expires_at',
+        'created_at',
     ];
 
     protected $casts = [
@@ -26,11 +30,6 @@ class Invitation extends Model
     ];
 
     // protected $appends = ['is_expired', 'is_accepted'];
-
-    public function organization()
-    {
-        return $this->belongsTo(Organization::class);
-    }
 
     public function inviter()
     {

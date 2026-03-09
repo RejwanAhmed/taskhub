@@ -25,7 +25,7 @@
 
                 <div class="modal-footer border-top-0">
                     <button class="btn btn-light" @click="emit('close')">Cancel</button>
-                    <SubmitButton :label="props?.organization ? 'Update' : 'Create'" :processing="formData.processing" />
+                    <SubmitButton :label="props?.organization?.id ? 'Update' : 'Create'" :processing="formData.processing" />
                 </div>
             </div>
         </div>
@@ -38,12 +38,15 @@ import { Field, Form as VForm } from "vee-validate";
 import { useForm  } from '@inertiajs/vue3';
 import ErrorMessage from "@/Components/ErrorMessage.vue";
 import SubmitButton from "@/Components/Button/SubmitButton.vue";
+import { Organization } from "@/types/interfaces/organization";
 
-const props = defineProps({
-    organization: Object || null,
-})
+const props = defineProps<{
+    organization: Organization | null,
+}>();
 
-const emit = defineEmits(['close']);
+const emit = defineEmits<{
+    close: []
+}>();
 
 const formData = useForm({
     name: props?.organization?.name || '',
