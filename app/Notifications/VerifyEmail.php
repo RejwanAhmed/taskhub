@@ -5,7 +5,7 @@ namespace App\Notifications;
 use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-VerifyEmail extends VerifyEmailNotification
+class VerifyEmail extends VerifyEmailNotification
 {
     /**
      * Get the mail representation of the notification.
