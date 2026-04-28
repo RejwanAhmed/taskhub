@@ -25,7 +25,13 @@ const submit = () => {
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="col-md-6 col-lg-5">
                 <div class="card shadow-sm border-0">
+                    <div class="invite-accent-bar"></div>
                     <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="invite-icon-wrap mx-auto">
+                                <i class="bi bi-building text-teal fs-1"></i>
+                            </div>
+                        </div>
                         <h3 class="card-title mb-4 text-center">
                             Create an account
                         </h3>
@@ -53,7 +59,7 @@ const submit = () => {
 
                             <!-- Email -->
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email address</label>
+                                <label for="email" class="form-label">Email Address</label>
                                 <input type="email" id="email" class="form-control" v-model="form.email" required
                                     autocomplete="username" />
                                 <div v-if="form.errors.email" class="text-danger small mt-1">
@@ -89,7 +95,7 @@ const submit = () => {
                             </div>
 
                             <!-- Login Link -->
-                            <div class="text-center small">
+                            <div class="text-center text-muted small">
                                 Already have an account?
                                 <Link href="/login" class="text-decoration-none">Log in</Link>
                             </div>

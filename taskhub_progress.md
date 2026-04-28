@@ -99,18 +99,18 @@ php artisan db:seed
 ## 📦 Phase 3: Authentication & Authorization
 
 ### Step 3.1: Authentication Setup
-- [ ] Laravel Breeze installed OR Fortify configured
-- [ ] Login page (Vue component)
-- [ ] Register page (Vue component)
-- [ ] Email verification setup
-- [ ] Password reset setup
-- [ ] Remember me functionality
-- [ ] Logout functionality
+- [✅] Laravel Breeze installed OR Fortify configured
+- [✅] Login page (Vue component)
+- [✅] Register page (Vue component)
+- [✅] Email verification setup
+- [✅] Password reset setup
+- [✅] Remember me functionality
+- [✅] Logout functionality
 
 **Routes to verify:**
-- [ ] `/login` works
-- [ ] `/register` works
-- [ ] `/forgot-password` works
+- [✅] `/login` works
+- [✅] `/register` works
+- [✅] `/forgot-password` works
 
 ---
 
@@ -135,22 +135,22 @@ php artisan route:list --except-vendor
 ## 🏗️ Phase 4: Core Features
 
 ### 4.1: Organization Management
-- [ ] OrganizationController created
-- [ ] Organization create form (Vue)
-- [ ] Organization dashboard (Vue)
-- [ ] Organization settings (Vue)
-- [ ] Invite member functionality
-- [ ] Accept invitation flow
-- [ ] Member list with roles
-- [ ] Remove member functionality
+- [✅] OrganizationController created
+- [✅] Organization create form (Vue)
+- [✅] Organization dashboard (Vue)
+- [✅] Organization settings (Vue)
+- [✅] Invite member functionality
+- [✅] Accept invitation flow
+- [✅] Member list with roles
+- [✅] Remove member functionality
 
 **Routes:**
-- [ ] GET /organizations
-- [ ] POST /organizations
-- [ ] GET /organizations/{org}
-- [ ] PUT /organizations/{org}
-- [ ] DELETE /organizations/{org}
-- [ ] POST /organizations/{org}/invite
+- [✅] GET /organizations
+- [✅] POST /organizations
+- [✅] GET /organizations/{org}
+- [✅] PUT /organizations/{org}
+- [✅] DELETE /organizations/{org}
+- [✅] POST /organizations/{org}/invite
 
 ---
 
@@ -323,3 +323,138 @@ php artisan route:list --except-vendor
 - **Phase 5:** ⏳ 0% Not Started
 
 **Total Project Progress:** ~10% Complete
+
+
+## Accept Invitation Flow
+
+Scenario A: Invitee DOES NOT have an account
+
+1. Invitee receives email with link:
+   https://taskhub.com/invitations/accept/{token}
+   ↓
+2. Clicks link → Goes to Invitation Accept Page
+   ↓
+3. Page shows:
+   ┌─────────────────────────────────────┐
+   │  You've been invited to join        │
+   │  "Acme Corp" as Manager             │
+   │                                     │
+   │  Invited by: john@example.com       │
+   │                                     │
+   │  ⚠️ You don't have an account yet   │
+   │                                     │
+   │  [Create Account & Accept]          │
+   │  [Decline Invitation]               │
+   └─────────────────────────────────────┘
+   ↓
+4. Clicks "Create Account & Accept"
+   ↓
+5. Redirects to Registration Page with:
+   - Email pre-filled (from invitation)
+   - Token stored in session
+   - NO organization name field (joining existing org)
+   ↓
+6. User completes registration:
+   - Name
+   - Password
+   - Confirm Password
+   ↓
+7. After registration & email verification:
+   - User automatically added to organization
+   - Role assigned from invitation
+   - Invitation marked as "accepted"
+   ↓
+8. Redirect to Dashboard (organization access ready)
+
+
+Scenario B: Invitee HAS an account
+1. Invitee receives email with link:
+   https://taskhub.com/invitations/accept/{token}
+   ↓
+2. Clicks link → Goes to Invitation Accept Page
+   ↓
+3. Page shows:
+   ┌─────────────────────────────────────┐
+   │  You've been invited to join        │
+   │  "Acme Corp" as Manager             │
+   │                                     │
+   │  Invited by: john@example.com       │
+   │                                     │
+   │  ✅ You already have an account     │
+   │                                     │
+   │  [Login & Accept]                   │
+   │  [Decline Invitation]               │
+   └─────────────────────────────────────┘
+   ↓
+4. Clicks "Login & Accept"
+   ↓
+5. Redirects to Login Page with token in URL
+   ↓
+6. User logs in
+   ↓
+7. After successful login:
+   - System checks if invitation token exists
+   - Adds user to organization
+   - Assigns role from invitation
+   - Invitation marked as "accepted"
+   ↓
+8. Redirect to Dashboard with new organization access
+
+
+Scenario C: Invitee is ALREADY LOGGED IN
+
+1. User already logged in, receives invitation email
+   ↓
+2. Clicks link → Goes to Invitation Accept Page
+   ↓
+3. System detects user is logged in
+   ↓
+4. Page shows:
+   ┌─────────────────────────────────────┐
+   │  You've been invited to join        │
+   │  "Acme Corp" as Manager             │
+   │                                     │
+   │  Invited by: john@example.com       │
+   │                                     │
+   │  Logged in as: alice@example.com    │
+   │                                     │
+   │  [Accept Invitation]                │
+   │  [Decline Invitation]               │
+   └─────────────────────────────────────┘
+   ↓
+5. Clicks "Accept Invitation"
+   ↓
+6. Immediately:
+   - User added to organization
+   - Role assigned
+   - Invitation marked as "accepted"
+   ↓
+7. Redirect to new organization dashboard
+
+
+📄 What's on the Invitation Accept Page?
+┌──────────────────────────────────────────────┐
+│  📧 Organization Invitation                  │
+├──────────────────────────────────────────────┤
+│                                              │
+│  You've been invited to join:                │
+│                                              │
+│  🏢 Acme Corp                                │
+│  👤 Role: Manager                            │
+│  📨 Invited by: John Doe (john@example.com)  │
+│  📅 Sent: 2 days ago                         │
+│  ⏰ Expires: In 5 days                       │
+│                                              │
+│  ──────────────────────────────────────      │
+│                                              │
+│  IF NOT LOGGED IN:                           │
+│    [Create Account & Accept]                 │
+│    [Already have account? Login]             │
+│                                              │
+│  IF LOGGED IN:                               │
+│    Logged in as: alice@example.com           │
+│    [Accept Invitation]                       │
+│                                              │
+│  [Decline Invitation]                        │
+│                                              │
+└──────────────────────────────────────────────┘

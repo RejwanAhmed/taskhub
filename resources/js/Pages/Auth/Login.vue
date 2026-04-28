@@ -28,7 +28,13 @@ const submit = () => {
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="col-md-6 col-lg-5">
                 <div class="card shadow-sm border-0">
+                    <div class="invite-accent-bar"></div>
                     <div class="card-body p-4">
+                        <div class="text-center mb-4">
+                            <div class="invite-icon-wrap mx-auto">
+                                <i class="bi bi-person-lock text-teal fs-1"></i>
+                            </div>
+                        </div>
                         <h3 class="card-title mb-4 text-center">
                             Sign in to your account
                         </h3>
