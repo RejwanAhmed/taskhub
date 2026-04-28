@@ -60,3 +60,55 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     flex-shrink: 0;
 }
+
+.invite-accent-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-teal), var(--color-teal-light));
+}
+
+.invite-icon-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #f0fdfa;
+    border: 1px solid #ccfbf1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.invite-details {
+    background-color: #f8fafc;
+    border: 1px solid #e8f0ee;
+    border-radius: 8px;
+    padding: 0.25rem 0;
+}
+
+.invite-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid #eef2f0;
+}
+
+.invite-detail-row:last-child {
+    border-bottom: none;
+}
+
+.invite-detail-label {
+    font-size: 0.83rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-right: 1rem;
+}
+
+.invite-role-badge {
+    font-size: 0.75rem;
+    padding: 0.3em 0.75em;
+    border-radius: 999px;
+    font-weight: 500;
+}

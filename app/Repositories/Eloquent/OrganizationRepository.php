@@ -64,4 +64,12 @@ class OrganizationRepository implements OrganizationRepositoryInterface
     {
         return $organization->members()->where('email', $email)->exists();
     }
+
+    public function attachUser(Organization $organization, $userId, $role)
+    {
+        $organization->members()->attach($userId, [
+            'joined_at' => now(),
+            'role' => $role
+        ]);
+    }
 }

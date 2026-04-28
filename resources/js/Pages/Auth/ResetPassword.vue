@@ -30,11 +30,12 @@ const submit = () => {
 
         <div class="container d-flex justify-content-center align-items-center min-vh-100">
             <div class="col-md-6 col-lg-5">
+                <div class="invite-accent-bar"></div>
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4">
                         <!-- Icon -->
                         <div class="text-center mb-4">
-                            <div class="justify-content-center">
+                            <div class="invite-icon-wrap mx-auto">
                                 <i class="bi bi-shield-lock text-teal fs-1"></i>
                             </div>
                         </div>

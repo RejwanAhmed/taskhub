@@ -14,7 +14,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->middleware('guest');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -31,13 +31,18 @@ Route::middleware('auth')->group(function () {
         Route::get('members', [OrganizationController::class, 'members'])->name('organizations.member');
     });
 
-    Route::prefix('invitations')->group(function () {
-        Route::post('/', [InvitationController::class, 'store'])->name('invitations.store');
+    Route::prefix('invitations')->name('invitations.')->group(function () {
+        Route::post('/', [InvitationController::class, 'store'])->name('store');
     });
 });
 
-Route::prefix('invitations')->group(function () {
-    Route::get('accept/{token}', [InvitationController::class, 'show'])->name('invitations.show');
+Route::prefix('invitations')->name('invitations.')->group(function() {
+    Route::get('accept/{token}', [InvitationController::class, 'show'])->middleware('signed')->name('show');
+    Route::post('accept/{token}', [InvitationController::class, 'accept'])->name('accept');
+    Route::get('register/{token}', [InvitationController::class, 'register'])->name('register');
+    Route::post('register/{token}', [InvitationController::class, 'storeRegistration'])->name('storeRegistration');
+    Route::get('login/{token}', [InvitationController::class, 'login'])->name('login');
+    Route::post('login/{token}', [InvitationController::class, 'storeLogin'])->name('storeLogin');
 });
 
 require __DIR__.'/auth.php';

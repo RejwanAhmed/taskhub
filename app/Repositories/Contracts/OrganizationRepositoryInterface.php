@@ -16,4 +16,5 @@ interface OrganizationRepositoryInterface
     public function switch(Organization $organization, $authUser);
     public function getOrganizationMembers(Organization $organization);
     public function isMember(Organization $organization, $email);
+    public function attachUser(Organization $organization, $userId, $role);
 }

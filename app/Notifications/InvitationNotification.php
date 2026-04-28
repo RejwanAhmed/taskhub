@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\URL;
 
 class InvitationNotification extends Notification implements ShouldQueue
 {
@@ -36,7 +37,11 @@ class InvitationNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $acceptUrl = route('invitations.show', ['token' => $this->invitation->token]);
+        $acceptUrl = URL::temporarySignedRoute(
+            'invitations.show', 
+            now()->addDays(7),
+            ['token' => $this->invitation->token]
+        );
         $organizationName = $this->invitation->organization->name;
         $inviterName = $this->invitation->inviter->name;
         $role = ucfirst($this->invitation->role);

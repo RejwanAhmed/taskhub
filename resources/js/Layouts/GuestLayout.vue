@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import FlashMessage from '@/Components/Message/FlashMessage.vue';
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import { Link } from '@inertiajs/vue3';
         <div
             class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg"
         >
+        <FlashMessage v-if="$page.props.flash" :flash="$page.props.flash"/>
             <slot />
         </div>
     </div>
