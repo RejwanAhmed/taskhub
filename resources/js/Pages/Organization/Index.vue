@@ -11,7 +11,7 @@
                 <div>
                     <small class="text-muted">Manage your organizations</small>
                 </div>
-                <button class="btn bg-teal text-white" @click="openOrganizationModal">
+                <button class="btn bg-teal text-white" @click="openOrganizationModal(null)">
                     <i class="bi bi-plus-lg me-1"></i> New Organization
                 </button>
             </div>
@@ -81,26 +81,6 @@
         <div v-if="showModal" class="modal d-block modal-background">
             <CreateOrganizationModal :showModal="showModal" :organization="selectedOrg" @close="showModal = false"></CreateOrganizationModal>
         </div>
-
-        <!-- Delete Confirm Modal -->
-        <!-- <div v-if="showDeleteModal" class="modal d-block" style="background: rgba(0,0,0,0.4);">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content border-0 rounded-4 text-center p-2">
-                    <div class="modal-body">
-                        <i class="bi bi-exclamation-triangle-fill text-danger display-5"></i>
-                        <h6 class="fw-bold mt-3">Delete Organization?</h6>
-                        <p class="text-muted small">
-                            <strong>Acme Corp</strong> will be permanently deleted.
-                        </p>
-                        <div class="d-flex gap-2 mt-3">
-                            <button class="btn btn-light flex-fill" @click="showDeleteModal = false">Cancel</button>
-                            <button class="btn btn-danger flex-fill">Delete</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
     </AuthenticatedLayout>
 </template>
 
