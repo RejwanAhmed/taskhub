@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Invitation;
 use App\Models\Organization;
-use App\Models\User;
 use App\Repositories\Contracts\InvitationRepositoryInterface;
 
 class InvitationRepository implements InvitationRepositoryInterface
@@ -34,11 +33,6 @@ class InvitationRepository implements InvitationRepositoryInterface
     public function getInvitation($token)
     {
         return $this->model::with(['organization', 'inviter'])->where('token', $token)->first();
-    }
-
-    public function checkUserExists($email)
-    {
-        return User::where('email', $email)->exists();
     }
 
     public function markInvitationAccepted(Invitation $invitation)

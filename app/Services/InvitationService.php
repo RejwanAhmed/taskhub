@@ -88,7 +88,7 @@ class InvitationService extends BaseModelService
     public function getInvitationDetails($token)
     {
         $invitation = $this->invitationRepo->getInvitation($token);        
-        $hasAccount = $this->invitationRepo->checkUserExists($invitation->email);
+        $hasAccount = $this->userRepo->checkUserExists($invitation->email);
         return [
             'invitation' => $invitation,
             'hasAccount' => $hasAccount,
