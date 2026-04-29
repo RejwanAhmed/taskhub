@@ -9,4 +9,5 @@ interface UserRepositoryInterface
 {
     public function updateCurrentOrganzation(User $user, $organizationId);
     public function createUser(Invitation $invitation, $validatedData);
+    public function checkUserExists($email);
 }
