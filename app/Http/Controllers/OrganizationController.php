@@ -8,6 +8,7 @@ use App\Http\Requests\Organization\SwitchOrganizationRequest;
 use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Models\Organization;
 use App\Services\OrganizationService;
+use App\Support\OrganizationSession;
 use Exception;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -16,10 +17,12 @@ use Log;
 class OrganizationController extends Controller
 {
     protected OrganizationService $organizationService;
-
+    protected $currentOrganizationId;
+    
     public function __construct(OrganizationService $organizationService)
     {
         $this->organizationService = $organizationService;
+        $this->currentOrganizationId = OrganizationSession::getCurrentOrg();
     }
 
     public function index()
@@ -93,7 +96,7 @@ class OrganizationController extends Controller
     public function members()
     {
         try {
-            $members = $this->organizationService->getOrganizationMembers();
+            $members = $this->organizationService->getOrganizationMembers($this->currentOrganizationId);
             $responseData = [
                 'members' => $members,
             ];

@@ -8,6 +8,7 @@ use App\Http\Requests\Invitation\CreateInvitationLoginRequest;
 use App\Http\Requests\Invitation\CreateInvitationRegistrationRequest;
 use App\Http\Requests\Invitation\CreateInvitationRequest;
 use App\Services\InvitationService;
+use App\Support\OrganizationSession;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,24 +18,26 @@ use Inertia\Inertia;
 class InvitationController extends Controller
 {
     protected InvitationService $invitationService;
+    protected $currentOrganizationId;
 
     public function __construct(InvitationService $invitationService)
     {
         $this->invitationService = $invitationService;
+        $this->currentOrganizationId = OrganizationSession::getCurrentOrg();
     }
 
     public function store(CreateInvitationRequest $request)
     {
         try {
             $validatedData = $request->validated();
-            $result = $this->invitationService->createInvitation(auth()->user(), $validatedData);
+            $result = $this->invitationService->createInvitation(auth()->user(), $validatedData, $this->currentOrganizationId);
             $message = "Inviatation {$result} successfully";
-            return redirect()->route('organizations.member')->with(Constants::SUCCESS, $message);
+            return redirect()->route('members')->with(Constants::SUCCESS, $message);
         } catch (BusinessException $e) {
             return redirect()->back()->withErrors(['email' => $e->getMessage()])->withInput(); // sends to formData.errors
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            return redirect()->route('organizations.member')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
+            return redirect()->route('members')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }
 

@@ -17,4 +17,5 @@ interface OrganizationRepositoryInterface
     public function getOrganizationMembers(Organization $organization);
     public function isMember(Organization $organization, $email);
     public function attachUser(Organization $organization, $userId, $role);
+    public function getCurrentOrganization($organizationId);
 }

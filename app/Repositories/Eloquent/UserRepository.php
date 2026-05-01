@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Support\OrganizationSession;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface

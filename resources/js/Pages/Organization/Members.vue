@@ -43,7 +43,7 @@
 
                             <!-- Delete -->
                             <DeleteConfirmationButton
-                                confirm-route="organizations.members.destroy"
+                                confirm-route="members.destroy"
                                 :obj="row"
                                 :delete-content="row.name"
                                 :icon-only="true"

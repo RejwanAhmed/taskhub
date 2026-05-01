@@ -11,6 +11,7 @@ use App\Repositories\Contracts\InvitationRepositoryInterface;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\Core\BaseModelService;
+use App\Support\OrganizationSession;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +20,10 @@ use Illuminate\Support\Str;
 
 class InvitationService extends BaseModelService
 {
-    protected $invitationRepo;
-    protected $organizationRepo;
-    protected $userRepo;
+    protected InvitationRepositoryInterface $invitationRepo;
+    protected OrganizationRepositoryInterface $organizationRepo;
+    protected UserRepositoryInterface $userRepo;
+
     
     public function model(): string
     {
@@ -35,10 +37,10 @@ class InvitationService extends BaseModelService
         $this->userRepo = $userRepo;
     }
 
-    public function createInvitation(User $user, $validatedData)
+    public function createInvitation(User $user, $validatedData, $currentOrganizationId)
     {
-        return DB::transaction(function () use ($user, $validatedData) {
-            $currentOrganization = $user->currentOrganization;
+        return DB::transaction(function () use ($user, $validatedData, $currentOrganizationId) {
+            $currentOrganization = $this->organizationRepo->getCurrentOrganization($currentOrganizationId);
             $email = $validatedData['email'];
             $isMember = $this->organizationRepo->isMember($currentOrganization, $email);
 
@@ -52,6 +54,7 @@ class InvitationService extends BaseModelService
                 'invited_by' => $user->id,
                 'expires_at' => now()->addDays(7),
                 'role' => $validatedData['role'],
+                'organization_id' => $currentOrganizationId,
             ];
 
             if ($existingInvite) {
@@ -110,6 +113,7 @@ class InvitationService extends BaseModelService
             $this->organizationRepo->attachUser($organization, $user->id, $invitation->role);
             $this->userRepo->updateCurrentOrganzation($user, $organization->id);
             $this->invitationRepo->markInvitationAccepted($invitation);
+            OrganizationSession::setCurrentOrg($organizationId);
 
             return true;
         });
@@ -130,6 +134,7 @@ class InvitationService extends BaseModelService
             $this->organizationRepo->attachUser($organization, $user->id, $invitation->role);
             $this->invitationRepo->markInvitationAccepted($invitation);
             Auth::login($user);
+            OrganizationSession::setCurrentOrg($organization->id);
         });
     }
 
@@ -138,13 +143,14 @@ class InvitationService extends BaseModelService
         $invitation = $invitationDetails['invitation'];
         if ($user->email !== $invitation->email) {
             throw new BusinessException(
-                'This invitation was sent to ' . $invitation->email . '. You logged in with ' . $user->email . '. Please log in with the correct account.'
+                'This invitation was sent to ' . $invitation->email . '. You are logged in with ' . $user->email . '. Please log in with the correct account.'
             );
         }
         DB::transaction(function () use ($user, $invitation) {
             $this->organizationRepo->attachUser($invitation->organization, $user->id, $invitation->role);
             $this->invitationRepo->markInvitationAccepted($invitation);
             $this->userRepo->updateCurrentOrganzation($user, $invitation->organization->id);
+            OrganizationSession::setCurrentOrg($organizationId);
         });
 
         return $invitation->organization->name;

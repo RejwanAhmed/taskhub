@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Organization;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
+use App\Support\OrganizationSession;
 
 class OrganizationRepository implements OrganizationRepositoryInterface
 {
@@ -50,6 +51,7 @@ class OrganizationRepository implements OrganizationRepositoryInterface
     public function switch(Organization $organization, $authUser)
     {
         $authUser->update(['current_organization_id' => $organization->id]);
+        OrganizationSession::setCurrentOrg($organization->id);
         return true;
     }
 
@@ -58,6 +60,11 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         return $organization->members()
             ->select('users.id', 'users.email', 'users.name', 'users.avatar', 'users.bio')
             ->get();
+    }
+
+    public function getCurrentOrganization($organizationId)
+    {
+        return $this->model::findOrFail($organizationId);
     }
 
     public function isMember(Organization $organization, $email)
