@@ -55,7 +55,7 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         return true;
     }
 
-    public function getOrganizationMembers($organization)
+    public function getOrganizationMembers(Organization $organization)
     {
         return $organization->members()
             ->select('users.id', 'users.email', 'users.name', 'users.avatar', 'users.bio')

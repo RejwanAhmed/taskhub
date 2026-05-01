@@ -20,7 +20,6 @@ class UserRepository implements UserRepositoryInterface
     public function updateCurrentOrganzation(User $user, $organizationId)
     {
         $user->update(['current_organization_id' => $organizationId]);
-        OrganizationSession::setCurrentOrg($organizationId);
     }
 
     public function createUser(Invitation $invitation, $validatedData)

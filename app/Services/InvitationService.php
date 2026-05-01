@@ -113,6 +113,7 @@ class InvitationService extends BaseModelService
             $this->organizationRepo->attachUser($organization, $user->id, $invitation->role);
             $this->userRepo->updateCurrentOrganzation($user, $organization->id);
             $this->invitationRepo->markInvitationAccepted($invitation);
+            OrganizationSession::setCurrentOrg($organizationId);
 
             return true;
         });
@@ -149,6 +150,7 @@ class InvitationService extends BaseModelService
             $this->organizationRepo->attachUser($invitation->organization, $user->id, $invitation->role);
             $this->invitationRepo->markInvitationAccepted($invitation);
             $this->userRepo->updateCurrentOrganzation($user, $invitation->organization->id);
+            OrganizationSession::setCurrentOrg($organizationId);
         });
 
         return $invitation->organization->name;
