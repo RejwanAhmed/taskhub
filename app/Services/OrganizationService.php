@@ -13,7 +13,6 @@ class OrganizationService extends BaseModelService
 {
     protected $organizationRepo;
     protected $authUser;
-    protected $currentOrganization;
 
     public function model(): string
     {
@@ -24,7 +23,6 @@ class OrganizationService extends BaseModelService
     {
         $this->organizationRepo = $organizationRepo;
         $this->authUser = Auth::user();
-        $this->currentOrganization = $this->authUser->currentOrganization;
     }
 
     public function getUserOrganizations()
@@ -63,8 +61,9 @@ class OrganizationService extends BaseModelService
         return $this->organizationRepo->switch($organization, $this->authUser);   
     }
 
-    public function getOrganizationMembers()
+    public function getOrganizationMembers($currentOrganizationId)
     {
-        return $this->organizationRepo->getOrganizationMembers($this->currentOrganization);
+        $organization = $this->organizationRepo->getCurrentOrganization($currentOrganizationId);
+        return $this->organizationRepo->getOrganizationMembers($organization);
     }
 }

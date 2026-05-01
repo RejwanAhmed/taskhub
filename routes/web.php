@@ -28,11 +28,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('organizations', OrganizationController::class)->except(['create', 'show', 'edit']);
     Route::prefix('organizations')->group(function () {
         Route::post('{organization}/switch', [OrganizationController::class, 'switchOrganization'])->name('organizations.switch');
-        Route::get('members', [OrganizationController::class, 'members'])->name('organizations.member');
     });
 
-    Route::prefix('invitations')->name('invitations.')->group(function () {
-        Route::post('/', [InvitationController::class, 'store'])->name('store');
+    Route::middleware(['org.access'])->group(function () {
+        Route::get('members', [OrganizationController::class, 'members'])->name('members');
+
+        Route::prefix('invitations')->name('invitations.')->group(function () {
+            Route::post('/', [InvitationController::class, 'store'])->name('store');
+        });
     });
 });
 

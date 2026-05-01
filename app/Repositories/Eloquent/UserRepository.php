@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Support\OrganizationSession;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
@@ -19,6 +20,7 @@ class UserRepository implements UserRepositoryInterface
     public function updateCurrentOrganzation(User $user, $organizationId)
     {
         $user->update(['current_organization_id' => $organizationId]);
+        OrganizationSession::setCurrentOrg($organizationId);
     }
 
     public function createUser(Invitation $invitation, $validatedData)

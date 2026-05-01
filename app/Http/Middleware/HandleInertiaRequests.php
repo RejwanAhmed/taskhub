@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Organization;
+use App\Support\OrganizationSession;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,7 +41,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'message' => fn () => $request->session()->get('message'),
             ],
-            'currentOrg' => $request->user()?->currentOrganization,
+            'currentOrg' => $request->user() ? Organization::find(OrganizationSession::getCurrentOrg()) : null, 
             'activeOrganizations' => $request->user()?->organizations()->where('organizations.status', 'active')->get(),
             // dd($request->user()?->organizations()->where('organizations.status', 'active')->toSql())
         ];
