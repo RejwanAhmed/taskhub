@@ -25,7 +25,7 @@
             <!-- Organization Cards -->
             <div class="row g-3">
                 <div v-for="org in props?.organizations" :key="org.id" class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm">
+                    <div class="card h-100 border-0 shadow">
                         <div class="card-body">
                             <div class="d-flex align-items-start justify-content-between">
                                 <div class="rounded-3 p-2 bg-opacity-10 text-teal">
