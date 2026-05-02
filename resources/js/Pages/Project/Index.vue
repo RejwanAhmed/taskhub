@@ -48,7 +48,7 @@
 
             <div v-else class="row g-3">
                 <div v-for="project in filtered" :key="project.id" class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100 project-card" @click="projectDetails(project)">
+                    <div class="card border-0 shadow h-100 project-card" @click="projectDetails(project)">
                         <!-- Color accent top bar -->
                         <div class="project-accent" :style="{ background: project.color ?? '#0d9488' }"></div>
 
