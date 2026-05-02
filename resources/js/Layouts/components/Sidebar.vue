@@ -101,6 +101,7 @@ const menuItems = [
     { name: 'Dashboard', icon: 'bi-speedometer2', route: '/dashboard' },
     { name: 'Oragnization', icon: 'bi-building', route: '/organizations' },
     { name: 'Members', icon: 'bi-people', route: '/members'},
+    { name: 'Projects', icon: 'bi-kanban', route: '/projects'},
     { name: 'Settings', icon: 'bi-gear', route: '/dashboard' },
 ];
 </script>
