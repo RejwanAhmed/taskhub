@@ -113,6 +113,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 500;
 }
 
+/* Start: Project List */
 /* Grid card */
 .project-accent {
     height: 2px;
@@ -156,3 +157,26 @@ h1, h2, h3, h4, h5, h6 {
 .project-row:hover td {
     background-color: #f0fdf9;
 }
+/* End: Project List */
+
+/* Start: Create Project Modal */
+.color-preset {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+    flex-shrink: 0;
+}
+
+.color-preset:hover {
+    transform: scale(1.15);
+}
+
+.color-preset--active {
+    border-color: white;
+    box-shadow: 0 0 0 2px currentColor;
+    transform: scale(1.15);
+}
+/* End Create Project Modal */

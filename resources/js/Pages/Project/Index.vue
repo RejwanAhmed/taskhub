@@ -145,12 +145,16 @@
             </div>
             <!-- End: Grid View -->
         </div>
+        <div v-if="showModal" class="modal d-block modal-background">
+            <CreateProjectModal :showModal="showModal" :project="selectedProject" @close="showModal = false"></CreateProjectModal>
+        </div>
     </AuthenticatedLayout>
 </template>
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteConfirmationButton from '@/Components/Button/DeleteConfirmationButton.vue';
+import CreateProjectModal from './Modal/CreateProjectModal.vue';
 
 const props = defineProps<{
     projects: Record<string, any>[],
