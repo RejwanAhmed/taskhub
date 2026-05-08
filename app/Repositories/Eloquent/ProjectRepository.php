@@ -28,4 +28,11 @@ class ProjectRepository implements ProjectRepositoryInterface
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
+    public function attachOwner(Project $project, $userId)
+    {
+        $project->members()->attach($userId, [
+            'role' => 'owner'
+        ]);
+    }
 }
