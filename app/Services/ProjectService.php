@@ -41,4 +41,9 @@ class ProjectService extends BaseModelService
             $this->projectRepo->attachOwner($project, $userId);
         });
     }
+
+    public function updateProject(Project $project, $validatedData)
+    {
+        $project->update($validatedData);
+    }
 }

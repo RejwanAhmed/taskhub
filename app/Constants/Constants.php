@@ -9,4 +9,5 @@ class Constants
     public const DEFAULTMESSAGE = 'Something went wrong. Please try again.';
     public const RESENT = 'resent';
     public const SENT = 'sent';
+    public const PERMISSIONMESSAGE = 'You do not have permission';
 }

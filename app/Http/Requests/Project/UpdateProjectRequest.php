@@ -6,7 +6,7 @@ use App\Support\OrganizationSession;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateProjectRequest extends FormRequest
+class UpdateProjectRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,13 @@ class CreateProjectRequest extends FormRequest
      */
     public function rules(): array
     {
+        $project = $this->route('project');
         return [
             'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('projects', 'name')->where('organization_id', OrganizationSession::getCurrentOrg()),
+                Rule::unique('projects', 'name')->where('organization_id', OrganizationSession::getCurrentOrg())->ignore($project),
             ],
             'description' => 'nullable|string',
             'status' => 'required|in:planning,active,on_hold,completed',

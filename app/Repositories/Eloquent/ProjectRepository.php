@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Organization;
 use App\Models\Project;
+use App\Models\User;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 
 class ProjectRepository implements ProjectRepositoryInterface
@@ -34,5 +35,10 @@ class ProjectRepository implements ProjectRepositoryInterface
         $project->members()->attach($userId, [
             'role' => 'owner'
         ]);
+    }
+
+    public function isProjectOwner(Project $project, User $user)
+    {
+        return $project->members()->where('user_id', $user->id)->where('role', 'owner')->exists();
     }
 }
