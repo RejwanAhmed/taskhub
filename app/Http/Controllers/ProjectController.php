@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Constants\Constants;
+use App\Http\Requests\Project\CreateProjectRequest;
+use App\Models\Project;
 use App\Services\ProjectService;
 use App\Support\OrganizationSession;
 use Exception;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -21,7 +24,6 @@ class ProjectController extends Controller
     public function index()
     {
         try {
-            
             $projects = $this->projectService->getProjects($this->currentOrganizationId);
             $responseData = [
                 'projects' => $projects,
@@ -30,6 +32,19 @@ class ProjectController extends Controller
         } catch (Exception $e) {
             \Log::error($e->getMessage());
             abort(500, Constants::DEFAULTMESSAGE);
+        }
+    }
+
+    public function store(CreateProjectRequest $request)
+    {
+        try {
+            $validatedData = $request->validated();
+            $this->projectService->createProject(auth()->user()->id, $this->currentOrganizationId, $validatedData);
+            $message = 'New Project Created Successfully';
+            return Redirect::route('projects.index')->with(Constants::SUCCESS, $message);
+        } catch (Exception $e) {
+            \Log::info('Project creation failed = '. $e->getMessage());
+            return Redirect::route('projects.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 use App\Services\Core\BaseModelService;
+use Illuminate\Support\Facades\DB;
 
 class ProjectService extends BaseModelService
 {
@@ -27,5 +28,17 @@ class ProjectService extends BaseModelService
     {
         $organization = $this->organizationRepo->getCurrentOrganization($organizationId);
         return $this->projectRepo->getProjects($organization);
+    }
+
+    public function createProject($userId, $organizationId, $validatedData)
+    {
+        return DB::transaction(function() use ($userId, $organizationId, $validatedData) {
+            $validatedData = array_merge($validatedData, [
+                'organization_id' => $organizationId,
+                'created_by' => $userId,
+            ]);
+            $project = $this->model()::create($validatedData);
+            $this->projectRepo->attachOwner($project, $userId);
+        });
     }
 }

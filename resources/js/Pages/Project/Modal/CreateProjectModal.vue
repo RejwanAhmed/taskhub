@@ -17,7 +17,7 @@
                         <label class="form-label fw-semibold small">
                             Project Name <span class="text-danger">*</span>
                         </label>
-                        <Field type="text" name="name" class="form-control" placeholder="e.g. Website Redesign" v-model="formData.name" rules="required" />
+                        <Field type="text" name="name" class="form-control" placeholder="e.g. Website Redesign" v-model="formData.name" required/>
                         <ErrorMessage :errorMessage="formData.errors.name" />
                     </div>
 
