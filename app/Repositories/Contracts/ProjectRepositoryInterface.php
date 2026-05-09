@@ -11,4 +11,5 @@ interface ProjectRepositoryInterface
     public function getProjects(Organization $organization);
     public function attachOwner(Project $project, $userId);
     public function isProjectOwner(Project $project, User $user);
+    public function getProjectDetails(Project $project);
 }

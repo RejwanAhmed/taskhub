@@ -46,4 +46,9 @@ class ProjectService extends BaseModelService
     {
         $project->update($validatedData);
     }
+
+    public function getProjectDetails(Project $project)
+    {
+        return $this->projectRepo->getProjectDetails($project);
+    }
 }

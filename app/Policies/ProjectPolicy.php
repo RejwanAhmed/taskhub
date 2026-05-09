@@ -20,4 +20,9 @@ class ProjectPolicy
     {
         return OrganizationSession::getCurrentOrg() === $project->organization_id && $this->projectRepo->isProjectOwner($project, $user);
     }
+
+    public function show(User $user, Project $project)
+    {
+        return OrganizationSession::getCurrentOrg() === $project->organization_id;
+    }
 }

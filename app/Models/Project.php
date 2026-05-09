@@ -12,10 +12,6 @@ class Project extends Model
     use HasFactory, BelongsToOrganization, HasActivityLog;
     protected $fillable = ['organization_id', 'name', 'slug', 'description', 'status', 'color', 'start_date', 'end_date', 'created_by'];
 
-    protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date'
-    ];
 
     // protected $appends = ['status_label'];
 

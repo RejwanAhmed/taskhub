@@ -66,4 +66,10 @@ class OrganizationService extends BaseModelService
         $organization = $this->organizationRepo->getCurrentOrganization($currentOrganizationId);
         return $this->organizationRepo->getOrganizationMembers($organization);
     }
+
+    public function getOrganizationActiveUsers($currentOrganizationId)
+    {
+        $organization = $this->organizationRepo->getCurrentOrganization($currentOrganizationId);
+        return $this->organizationRepo->getActiveUsers($organization);
+    }
 }

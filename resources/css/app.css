@@ -4,6 +4,7 @@
   --color-teal: #0d9488;
   --color-teal-dark: #0f766e;
   --color-teal-light: #5eead4;
+  --color-teal-soft: #f0fdfa;
 }
 
 html, body {
@@ -45,8 +46,8 @@ h1, h2, h3, h4, h5, h6 {
 .dropdown-menu .dropdown-item:hover,
 .dropdown-menu .dropdown-item:focus,
 .dropdown-menu .dropdown-item:active {
-    background-color: var(--color-teal) !important;
-    color: #ffffff !important;
+    background-color: var(--color-teal-soft) !important;
+    color: black;
 }
 
 .avatar-circle {
@@ -70,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: #f0fdfa;
+    background-color: var(--color-teal-soft);
     border: 1px solid #ccfbf1;
     display: flex;
     align-items: center;
@@ -117,7 +118,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Grid card */
 .project-accent {
     height: 2px;
-    border-radius: 0.5rem 0.5rem 0 0;
+    /* border-radius: 0.5rem 0.5rem 0 0; */
 }
 
 .project-card {
@@ -180,3 +181,32 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.15);
 }
 /* End Create Project Modal */
+
+/* Start Assign User */
+/* .text-teal        { color: #0d9488; } */
+.border-teal-subtle { 
+    border-color: #99f6e4 !important; 
+}
+.bg-teal-subtle { 
+    background-color: #f0fdf9; 
+}
+
+.user-row {
+    border: 1.5px solid transparent;
+    background: #f8f9fa;
+    transition: background 0.12s, border-color 0.12s;
+    user-select: none;
+}
+.user-row:hover { 
+    background: #f0fdf9; 
+}
+.user-row--selected { 
+    background: #f0fdf9; border-color: #0d9488; 
+}
+
+.user-list {
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+/* End Assign User */

@@ -41,4 +41,14 @@ class ProjectRepository implements ProjectRepositoryInterface
     {
         return $project->members()->where('user_id', $user->id)->where('role', 'owner')->exists();
     }
+
+    public function getProjectDetails(Project $project)
+    {
+        return $project->load([
+            'members:id,name'
+        ])->loadCount([
+            'tasks',
+            'tasks as completed_tasks_count' => fn ($q) => $q->where('status', 'completed')
+        ]);
+    }
 }
