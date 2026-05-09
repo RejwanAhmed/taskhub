@@ -79,4 +79,9 @@ class OrganizationRepository implements OrganizationRepositoryInterface
             'role' => $role
         ]);
     }
+
+    public function getActiveUsers(Organization $organization)
+    {
+        return $organization->activeUsers()->get(['users.id', 'users.name']);
+    }
 }

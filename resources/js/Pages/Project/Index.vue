@@ -48,7 +48,7 @@
 
             <div v-else class="row g-3">
                 <div v-for="project in filtered" :key="project.id" class="col-sm-6 col-lg-4 col-xl-3">
-                    <div class="card border-0 shadow h-100 project-card" @click="projectDetails(project)">
+                    <div class="card border-0 shadow h-100 project-card">
                         <!-- Color accent top bar -->
                         <div class="project-accent" :style="{ background: project.color ?? '#0d9488' }"></div>
 
@@ -58,8 +58,8 @@
                                 <h6 class="fw-bold mb-0 me-2" style="line-height: 1.3;">
                                     {{ project.name }}
                                 </h6>
-                                <div class="dropdown" @click.stop>
-                                    <button class="btn btn-sm btn-light px-1 py-0" data-bs-toggle="dropdown">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
@@ -70,7 +70,9 @@
                                         </li>
                                         <li><hr class="dropdown-divider" /></li>
                                         <li>
-                                            <DeleteConfirmationButton confirm-route="projects.destroy" :obj="project" :delete-content="project.name" />
+                                            <button class="dropdown-item" @click="projectDetails(project)">
+                                                <i class="bi bi-eye me-2 text-teal"></i> Details
+                                            </button>
                                         </li>
                                     </ul>
                                 </div>
@@ -152,9 +154,11 @@
 </template>
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import DeleteConfirmationButton from '@/Components/Button/DeleteConfirmationButton.vue';
-import CreateProjectModal from './Modal/CreateProjectModal.vue';
+import CreateProjectModal from '@/Pages/Project/Modal/CreateProjectModal.vue';
+import { Head } from '@inertiajs/vue3';
+import { statusColor, statusLabel, progressPct, progressColor } from '@/Utils/projectStatus';
 
 const props = defineProps<{
     projects: Record<string, any>[],
@@ -166,37 +170,8 @@ const showModal     = ref(false);
 const selectedProject = ref<any | null>(null);
 
 // Helpers
-const progressPct = (p: any): number => {
-    if (!p.tasks_count) return 0;
-    return Math.round(((p.completed_tasks_count ?? 0) / p.tasks_count) * 100);
-};
-
-const progressColor = (p: any): string => {
-    if (isOverdue(p)) return '#ef4444';
-    if (progressPct(p) === 100) return '#10b981';
-    return p.color ?? '#0d9488';
-};
-
-const isOverdue = (p: any): boolean => {
-    if (!p.end_date || p.status === 'completed') return false;
-    return new Date(p.end_date) < new Date();
-};
-
 const formatDate = (d: string) => {
     return new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
-}
-
-const statusLabel = (s: string) => {
-    return ({ active: 'Active', planning: 'Planning', on_hold: 'On hold', completed: 'Completed' }[s] ?? s);
-}
-
-const statusColor = (s: string) => { 
-    return ({
-        active:    'bg-success',
-        planning:  'bg-info text-dark',
-        on_hold:   'bg-warning text-dark',
-        completed: 'bg-secondary',
-    }[s] ?? 'bg-secondary');
 }
 
 const stats = computed(() => {
@@ -221,7 +196,7 @@ const filtered = computed(() => {
 });
 
 const projectDetails = (project: any) => {
-    
+    router.visit(route('projects.show', project.id))
 };
 
 const openProjectModal = (project: any | null) => {
