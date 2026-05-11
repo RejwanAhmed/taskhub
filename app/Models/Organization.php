@@ -18,7 +18,7 @@ class Organization extends Model
     public function members()
     {
         return $this->belongsToMany(User::class, 'organization_user')
-            ->withPivot('role', 'joined_at');
+            ->withPivot('role', 'joined_at', 'status');
     }
 
     public function projects()
@@ -62,4 +62,8 @@ class Organization extends Model
         return $this->members()->wherePivot('role', 'member');
     }
 
+    public function activeUsers()
+    {
+        return $this->members()->wherePivot('status', 'active');
+    }
 }

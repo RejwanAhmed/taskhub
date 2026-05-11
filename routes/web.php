@@ -37,7 +37,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('invitations')->name('invitations.')->group(function () {
             Route::post('/', [InvitationController::class, 'store'])->name('store');
         });
-        Route::resource('projects', ProjectController::class)->except(['create', 'edit']);
+        Route::resource('projects', ProjectController::class)->except(['create', 'edit', 'destroy']);
+        Route::put('projects/{project}/assign-members', [ProjectController::class, 'assignMembers'])->name('projects.assignMembers');
     });
 });
 
