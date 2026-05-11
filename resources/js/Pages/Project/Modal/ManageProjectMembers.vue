@@ -202,7 +202,7 @@ const submit = (): void => {
 
     formData
         .transform(() => ({ members }))
-        .put(route('projects.members.update', props.project.id), {
+        .put(route('projects.assignMembers', props.project.id), {
             preserveScroll: true,
             onSuccess: () => emit('close'),
         });

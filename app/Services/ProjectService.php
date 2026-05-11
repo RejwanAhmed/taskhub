@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Project;
+use App\Models\User;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 use App\Services\Core\BaseModelService;
@@ -50,5 +51,16 @@ class ProjectService extends BaseModelService
     public function getProjectDetails(Project $project)
     {
         return $this->projectRepo->getProjectDetails($project);
+    }
+
+    public function assignMembers(Project $project, array $members, User $user): void
+    {
+        $syncData = [];
+        $userId = $user->id;
+        foreach ($members['members'] as $member) {
+            $syncData[$member['id']] = ['role' => $member['role'], 'added_by' => $userId];
+        }
+
+        $this->projectRepo->syncMembers($project, $syncData);
     }
 }

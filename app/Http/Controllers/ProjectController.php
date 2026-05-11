@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants\Constants;
+use App\Http\Requests\Project\AssignMembersRequest;
 use App\Http\Requests\Project\CreateProjectRequest;
 use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Models\Project;
@@ -87,6 +88,18 @@ class ProjectController extends Controller
         } catch (Exception $e) {
             Log::info('Project details failed = '. $e->getMessage());
             return Redirect::route('projects.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
+        }
+    }
+
+    public function assignMembers(AssignMembersRequest $request, Project $project)
+    {
+        try {
+            $validatedData = $request->validated();
+            $this->projectService->assignMembers($project, $validatedData, auth()->user());
+            return back()->with(Constants::SUCCESS, 'Members updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Assign members failed: ' . $e->getMessage());
+            return back()->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }
 }
