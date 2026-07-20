@@ -51,4 +51,9 @@ class ProjectRepository implements ProjectRepositoryInterface
             'tasks as completed_tasks_count' => fn ($q) => $q->where('status', 'completed')
         ]);
     }
+
+    public function syncMembers(Project $project, $syncData): void
+    {
+        $project->members()->sync($syncData);
+    }
 }
