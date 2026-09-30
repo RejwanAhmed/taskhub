@@ -12,7 +12,7 @@ class Task extends Model
 {
     use HasFactory, SoftDeletes, BelongsToOrganization, HasActivityLog;
 
-    protected $fillable = ['organization_id', 'project_id', 'parent_task_id', 'title', 'description', 'priority', 'status', 'assigned_to', 'created_by', 'due_date', 'estimated_hours', 'actual_hours', 'completed_at', 'position'];
+    protected $fillable = ['organization_id', 'project_id', 'task_type_id', 'parent_task_id', 'title', 'description', 'priority', 'status', 'assigned_to', 'created_by', 'due_date', 'estimated_hours', 'actual_hours', 'completed_at', 'position'];
 
     protected $casts = [
         'due_date' => 'date',
@@ -63,6 +63,11 @@ class Task extends Model
         return $this->morphMany(Attachment::class, 'attachable');
     }
 
+    public function taskType()
+    {
+        return $this->belongsTo(TaskType::class);
+    }
+
     // Scopes
     public function scopeToDo($query)
     {
@@ -102,7 +107,7 @@ class Task extends Model
 
     public function scopeAssignedTo($query, $userId)
     {
-        return $query->where('assigned', $userId);
+        return $query->where('assigned_to', $userId);
     }
 
     public function scopeDueToday($query)

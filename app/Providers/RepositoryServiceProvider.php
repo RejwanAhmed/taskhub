@@ -5,10 +5,12 @@ namespace App\Providers;
 use App\Repositories\Contracts\InvitationRepositoryInterface;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
+use App\Repositories\Contracts\TaskTypeRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\InvitationRepository;
 use App\Repositories\Eloquent\OrganizationRepository;
 use App\Repositories\Eloquent\ProjectRepository;
+use App\Repositories\Eloquent\TaskTypeRepository;
 use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +26,7 @@ class RepositoryServiceProvider extends ServiceProvider
             InvitationRepositoryInterface::class   => InvitationRepository::class,
             UserRepositoryInterface::class => UserRepository::class,
             ProjectRepositoryInterface::class => ProjectRepository::class,
+            TaskTypeRepositoryInterface::class => TaskTypeRepository::class,
         ];
 
         foreach($repositories as $interface => $repository) {

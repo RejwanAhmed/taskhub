@@ -4,6 +4,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TaskTypeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,8 +38,11 @@ Route::middleware('auth')->group(function () {
         Route::prefix('invitations')->name('invitations.')->group(function () {
             Route::post('/', [InvitationController::class, 'store'])->name('store');
         });
+
         Route::resource('projects', ProjectController::class)->except(['create', 'edit', 'destroy']);
         Route::put('projects/{project}/assign-members', [ProjectController::class, 'assignMembers'])->name('projects.assignMembers');
+        
+        Route::resource('task-types', TaskTypeController::class)->except(['create', 'edit', 'show']);
     });
 });
 
