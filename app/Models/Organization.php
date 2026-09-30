@@ -66,4 +66,9 @@ class Organization extends Model
     {
         return $this->members()->wherePivot('status', 'active');
     }
+
+    public function taskTypes()
+    {
+        return $this->hasMany(TaskType::class);
+    }
 }
