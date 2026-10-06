@@ -20,19 +20,18 @@ class ProjectController extends Controller
 {
     protected  ProjectService $projectService;
     protected  OrganizationService $organizationService;
-    protected $currentOrganizationId;
 
     public function __construct(ProjectService $projectService, OrganizationService $organizationService)
     {
         $this->projectService = $projectService;
         $this->organizationService = $organizationService;
-        $this->currentOrganizationId = OrganizationSession::getCurrentOrg();
     }
 
     public function index()
     {
         try {
-            $projects = $this->projectService->getProjects($this->currentOrganizationId);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $projects = $this->projectService->getProjects($orgId);
             $responseData = [
                 'projects' => $projects,
             ];
@@ -47,11 +46,12 @@ class ProjectController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $this->projectService->createProject(auth()->user()->id, $this->currentOrganizationId, $validatedData);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $this->projectService->createProject(auth()->user(), $orgId, $validatedData);
             $message = 'New Project Created Successfully';
             return Redirect::route('projects.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
-            Log::info('Project creation failed = '. $e->getMessage());
+            Log::error('Project creation failed = '. $e->getMessage());
             return Redirect::route('projects.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }
@@ -67,7 +67,7 @@ class ProjectController extends Controller
         } catch (AuthorizationException $e) {
             return back()->with(Constants::ERROR, Constants::PERMISSIONMESSAGE);
         } catch (Exception $e) {
-            Log::info('Project update failed = '. $e->getMessage());
+            Log::error('Project update failed = '. $e->getMessage());
             return Redirect::route('projects.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }
@@ -77,7 +77,8 @@ class ProjectController extends Controller
         try {
             $this->authorize('show', $project);
             $projectDetails = $this->projectService->getProjectDetails($project);
-            $activeUsers = $this->organizationService->getOrganizationActiveUsers($this->currentOrganizationId);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $activeUsers = $this->organizationService->getOrganizationActiveUsers($orgId);
             $responseData = [
                 'project' => $projectDetails->toArray(),
                 'activeUsers' => $activeUsers->toArray(),
@@ -86,7 +87,7 @@ class ProjectController extends Controller
         } catch (AuthorizationException $e) {
             return back()->with(Constants::ERROR, Constants::PERMISSIONMESSAGE);
         } catch (Exception $e) {
-            Log::info('Project details failed = '. $e->getMessage());
+            Log::error('Project details failed = '. $e->getMessage());
             return Redirect::route('projects.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }

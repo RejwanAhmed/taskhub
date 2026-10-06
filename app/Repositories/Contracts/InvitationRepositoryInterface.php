@@ -7,9 +7,9 @@ use App\Models\Organization;
 
 interface InvitationRepositoryInterface
 {
-    public function createInvitation($validatedData);
-    public function findPendingInvitation(Organization $currentOrganization, $email);
-    public function updateInvitation(Invitation $invitation, $data);
-    public function getInvitation($token);
+    public function createInvitation(array $data);
+    public function findPendingInvitation(Organization $organization, string $email);
+    public function updateInvitation(Invitation $invitation, array $data);
+    public function getInvitation(string $token);
     public function markInvitationAccepted(Invitation $invitation);
 }

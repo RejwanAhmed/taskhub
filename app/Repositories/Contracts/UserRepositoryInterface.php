@@ -7,7 +7,7 @@ use App\Models\User;
 
 interface UserRepositoryInterface
 {
-    public function updateCurrentOrganzation(User $user, $organizationId);
-    public function createUser(Invitation $invitation, $validatedData);
-    public function checkUserExists($email);
+    public function updateCurrentOrganization(User $user, int $orgId);
+    public function createUser(Invitation $invitation, array $data);
+    public function checkUserExists(string $email);
 }

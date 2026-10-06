@@ -18,19 +18,18 @@ use Inertia\Inertia;
 class InvitationController extends Controller
 {
     protected InvitationService $invitationService;
-    protected $currentOrganizationId;
 
     public function __construct(InvitationService $invitationService)
     {
         $this->invitationService = $invitationService;
-        $this->currentOrganizationId = OrganizationSession::getCurrentOrg();
     }
 
     public function store(CreateInvitationRequest $request)
     {
         try {
             $validatedData = $request->validated();
-            $result = $this->invitationService->createInvitation(auth()->user(), $validatedData, $this->currentOrganizationId);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $result = $this->invitationService->createInvitation(auth()->user(), $validatedData, $orgId);
             $message = "Inviatation {$result} successfully";
             return redirect()->route('members')->with(Constants::SUCCESS, $message);
         } catch (BusinessException $e) {
@@ -51,7 +50,7 @@ class InvitationController extends Controller
             ];
             return Inertia::render('Invitation/Accept', $responseData);
         } catch (BusinessException $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             return Inertia::render('Error/InvitationError', [
                 'message' => $e->getMessage(),
             ])->toResponse(request())->setStatusCode(403);
@@ -78,7 +77,8 @@ class InvitationController extends Controller
                 } elseif (Auth::check()) {
                     if (Auth::user()->email == $invitation->email) {
                         // Scenario C: Has Account and logged in with same account
-                        $this->invitationService->acceptInvitation(auth()->user(), $token);
+                        $orgId = $this->invitationService->acceptInvitation(auth()->user(), $token);
+                        OrganizationSession::setCurrentOrg($orgId);
                         return redirect(route('dashboard', absolute: false));
                     } else {
                         // Scenario D: Has Account but logged in with another account
@@ -123,7 +123,11 @@ class InvitationController extends Controller
         try {
             $validatedData = $request->validated();
             $invitationDetails = $this->invitationService->getInvitationDetails($token);
-            $this->invitationService->registerInvitedUser($validatedData, $invitationDetails);
+            $result = $this->invitationService->registerInvitedUser($validatedData, $invitationDetails);
+
+            Auth::login($result['user']);
+            OrganizationSession::setCurrentOrg($result['orgId']);
+
             return redirect(route('dashboard', absolute: false));
         } catch (BusinessException $e) {
             return back()->with(Constants::ERROR, $e->getMessage());
@@ -153,7 +157,7 @@ class InvitationController extends Controller
         }
     }
 
-    public function storeLogin(CreateInvitationLoginRequest $request, $token)
+    public function storeLogin(CreateInvitationLoginRequest $request, string $token)
     {
         try {
             $validatedData = $request->validated();
@@ -164,7 +168,9 @@ class InvitationController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
             
-            $this->invitationService->loginInvitedUser($user, $invitationDetails);
+            $orgId = $this->invitationService->loginInvitedUser($user, $invitationDetails);
+            OrganizationSession::setCurrentOrg($orgId);
+
             return redirect(route('dashboard', absolute: false));
         } catch (BusinessException $e) {            
             Auth::logout();

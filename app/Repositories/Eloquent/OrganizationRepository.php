@@ -3,8 +3,8 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Organization;
+use App\Models\User;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
-use App\Support\OrganizationSession;
 
 class OrganizationRepository implements OrganizationRepositoryInterface
 {
@@ -17,18 +17,18 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         $this->model = $model;
     }
     
-    public function getUserOrganizations($user)
+    public function getUserOrganizations(User $user)
     {
         $organizations= $user->organizations()->withCount('members')->withCount('tasks')->get();
         return $organizations;
     }
 
-    public function create($validatedData)
+    public function create(array $data)
     {
-        return $this->model::create($validatedData);
+        return $this->model::create($data);
     }
 
-    public function attachOwner($organization, $userId)
+    public function attachOwner(Organization $organization, int $userId)
     {
         $organization->members()->attach($userId, [
             'joined_at' => now(),
@@ -36,9 +36,9 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         ]);
     }
 
-    public function update(Organization $organization, $validatedData)
+    public function update(Organization $organization, array $data)
     {
-        $organization->update($validatedData);
+        $organization->update($data);
         return $organization;
     }
 
@@ -48,10 +48,9 @@ class OrganizationRepository implements OrganizationRepositoryInterface
         return true;
     }
 
-    public function switch(Organization $organization, $authUser)
+    public function switch(Organization $organization, User $user)
     {
-        $authUser->update(['current_organization_id' => $organization->id]);
-        OrganizationSession::setCurrentOrg($organization->id);
+        $user->update(['current_organization_id' => $organization->id]);
         return true;
     }
 
@@ -62,17 +61,17 @@ class OrganizationRepository implements OrganizationRepositoryInterface
             ->get();
     }
 
-    public function getCurrentOrganization($organizationId)
+    public function getCurrentOrganization(int $orgId)
     {
-        return $this->model::findOrFail($organizationId);
+        return $this->model::findOrFail($orgId);
     }
 
-    public function isMember(Organization $organization, $email)
+    public function isMember(Organization $organization, string $email)
     {
         return $organization->members()->where('email', $email)->exists();
     }
 
-    public function attachUser(Organization $organization, $userId, $role)
+    public function attachUser(Organization $organization, int $userId, string $role)
     {
         $organization->members()->attach($userId, [
             'joined_at' => now(),

@@ -8,9 +8,10 @@ use App\Repositories\Contracts\TaskTypeRepositoryInterface;
 
 class TaskTypeRepository implements TaskTypeRepositoryInterface
 {
-    public function model()
+    protected $model;
+    public function __construct(TaskType $model)
     {
-        return TaskType::class;
+        $this->model = $model;
     }
 
     public function getTaskTypes(Organization $organization)
@@ -18,19 +19,22 @@ class TaskTypeRepository implements TaskTypeRepositoryInterface
         return $organization->taskTypes()->get();
     }
 
-    public function createTaskType($validatedData)
+    public function createTaskType(array $data)
     {
-        return $this->model()::create($validatedData);
+        return $this->model::create($data);
     }
 
-    public function removeDefault(Organization $organization)
+    public function removeDefault(Organization $organization, TaskType $taskType = null)
     {
-        return $organization->taskTypes()->where('is_default', true)->update(['is_default' => false]);
+        return $organization->taskTypes()
+            ->where('is_default', true)
+            ->when($taskType, fn($q) => $q->where('id', '!=', $taskType->id))
+            ->update(['is_default' => false]);
     }
     
-    public function updateTaskType(TaskType $taskType, $validatedData)
+    public function updateTaskType(TaskType $taskType, array $data)
     {
-        return $taskType->update($validatedData);
+        return $taskType->update($data);
     }
 
     public function deleteTaskType(TaskType $taskType)

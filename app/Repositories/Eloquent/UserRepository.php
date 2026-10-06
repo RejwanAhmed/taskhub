@@ -5,7 +5,6 @@ namespace App\Repositories\Eloquent;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
-use App\Support\OrganizationSession;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
@@ -17,22 +16,22 @@ class UserRepository implements UserRepositoryInterface
         $this->model = $model;
     }
 
-    public function updateCurrentOrganzation(User $user, $organizationId)
+    public function updateCurrentOrganization(User $user, int $orgId)
     {
-        $user->update(['current_organization_id' => $organizationId]);
+        $user->update(['current_organization_id' => $orgId]);
     }
 
-    public function createUser(Invitation $invitation, $validatedData)
+    public function createUser(Invitation $invitation, array $data)
     {
         return $this->model::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
             'current_organization_id' => $invitation->organization_id,
         ]);
     }
 
-    public function checkUserExists($email)
+    public function checkUserExists(string $email)
     {
         return $this->model::where('email', $email)->exists();
     }
