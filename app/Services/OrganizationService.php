@@ -4,72 +4,63 @@ namespace App\Services;
 
 use App\Models\Organization;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
-use App\Services\Core\BaseModelService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 
-class OrganizationService extends BaseModelService
+class OrganizationService
 {
     protected $organizationRepo;
-    protected $authUser;
-
-    public function model(): string
-    {
-        return Organization::class;
-    }
 
     public function __construct(OrganizationRepositoryInterface $organizationRepo)
     {
         $this->organizationRepo = $organizationRepo;
-        $this->authUser = Auth::user();
     }
 
-    public function getUserOrganizations()
+    public function getUserOrganizations(): Collection
     {
-        return $this->organizationRepo->getUserOrganizations($this->authUser);
+        return $this->organizationRepo->getUserOrganizations(auth()->user());
     }
 
-    public function createOrganization($validatedData)
+    public function createOrganization(array $data): Organization
     {
-        return DB::transaction(function () use ($validatedData) {
-            $validatedData['slug'] = Str::slug($validatedData['name']) . '-' . Str::random(4);
-            $validatedData['status'] = 'active';
-            $validatedData['approved_by'] = $this->authUser->id;
-            $validatedData['approved_at'] = now();
+        return DB::transaction(function () use ($data) {
+            $data['slug'] = Str::slug($data['name']) . '-' . Str::random(4);
+            $data['status'] = 'active';
+            $data['approved_by'] = auth()->user()->id;
+            $data['approved_at'] = now();
             
-            $organization = $this->organizationRepo->create($validatedData);
-            $this->organizationRepo->attachOwner($organization, $this->authUser->id);
+            $organization = $this->organizationRepo->create($data);
+            $this->organizationRepo->attachOwner($organization, auth()->user()->id);
 
             return $organization;
         });
     }
 
-    public function updateOrganization(Organization $organization, $validatedData)
+    public function updateOrganization(Organization $organization, array $data): Organization
     {
-        $organization = $this->organizationRepo->update($organization, $validatedData);
-        return $organization;
+        return $this->organizationRepo->update($organization, $data);
     }
 
-    public function deleteOrganization(Organization $organization)
+    public function deleteOrganization(Organization $organization): bool
     {
         return $this->organizationRepo->delete($organization);
     }
 
-    public function switchOrganization(Organization $organization)
+    public function switchOrganization(Organization $organization): bool
     {
-        return $this->organizationRepo->switch($organization, $this->authUser);   
+        return $this->organizationRepo->switch($organization, auth()->user());   
     }
 
-    public function getOrganizationMembers($currentOrganizationId)
+    public function getOrganizationMembers(int $orgId): Collection
     {
-        $organization = $this->organizationRepo->getCurrentOrganization($currentOrganizationId);
+        $organization = $this->organizationRepo->getCurrentOrganization($orgId);
         return $this->organizationRepo->getOrganizationMembers($organization);
     }
 
-    public function getOrganizationActiveUsers($currentOrganizationId)
+    public function getOrganizationActiveUsers(int $orgId): Collection
     {
-        $organization = $this->organizationRepo->getCurrentOrganization($currentOrganizationId);
+        $organization = $this->organizationRepo->getCurrentOrganization($orgId);
         return $this->organizationRepo->getActiveUsers($organization);
     }
 }

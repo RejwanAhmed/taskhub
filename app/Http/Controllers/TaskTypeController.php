@@ -16,25 +16,24 @@ use Inertia\Inertia;
 class TaskTypeController extends Controller
 {
     protected TaskTypeService $taskTypeService;
-    protected $currentOrganizationId;
 
     public function __construct(TaskTypeService $taskTypeService)
     {
         $this->taskTypeService = $taskTypeService;
-        $this->currentOrganizationId = OrganizationSession::getCurrentOrg();
     }
 
     public function index()
     {
         try {
-            $taskTypes = $this->taskTypeService->getTaskTypes($this->currentOrganizationId);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $taskTypes = $this->taskTypeService->getTaskTypes($orgId);
             $responseData = [
                 'taskTypes' => $taskTypes
             ];
 
             return Inertia::render('TaskType/Index', $responseData);
         } catch (Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
             abort(500, Constants::DEFAULTMESSAGE);
         }
     }
@@ -43,12 +42,12 @@ class TaskTypeController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $validatedData['organization_id'] = $this->currentOrganizationId;
-            $this->taskTypeService->createTaskType($validatedData);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $this->taskTypeService->createTaskType($orgId, $validatedData);
             $message = 'New Task Type Created Successfully';
             return Redirect::route('task-types.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
-            Log::info('Task Type creation failed = '. $e->getMessage());
+            Log::error('Task Type creation failed = '. $e->getMessage());
             return Redirect::route('task-types.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }
@@ -57,12 +56,12 @@ class TaskTypeController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $validatedData['organization_id'] = $this->currentOrganizationId;
-            $this->taskTypeService->updateTaskType($taskType, $validatedData);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $this->taskTypeService->updateTaskType($taskType, $orgId, $validatedData);
             $message = 'Task Type Updated Successfully';
             return Redirect::route('task-types.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
-            Log::info('Task Type update failed = ' . $e->getMessage());
+            Log::error('Task Type update failed = ' . $e->getMessage());
             return Redirect::route('task-types.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }
@@ -74,7 +73,7 @@ class TaskTypeController extends Controller
             $message = 'Task Type Deleted Successfully';
             return Redirect::route('task-types.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
-            Log::info('Task Type deleted failed = ' . $e->getMessage());
+            Log::error('Task Type deleted failed = ' . $e->getMessage());
             return Redirect::route('task-types.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
     }

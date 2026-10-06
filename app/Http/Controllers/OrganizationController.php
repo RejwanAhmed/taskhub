@@ -12,17 +12,15 @@ use App\Support\OrganizationSession;
 use Exception;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-use Log;
+use Illuminate\Support\Facades\Log;
 
 class OrganizationController extends Controller
 {
     protected OrganizationService $organizationService;
-    protected $currentOrganizationId;
     
     public function __construct(OrganizationService $organizationService)
     {
         $this->organizationService = $organizationService;
-        $this->currentOrganizationId = OrganizationSession::getCurrentOrg();
     }
 
     public function index()
@@ -44,7 +42,7 @@ class OrganizationController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $organization = $this->organizationService->createOrganization($validatedData);
+            $this->organizationService->createOrganization($validatedData);
             $message = 'New Organization Created Successfully';
             return Redirect::route('organizations.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
@@ -57,7 +55,7 @@ class OrganizationController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $ogranization = $this->organizationService->updateOrganization($organization, $validatedData);
+            $this->organizationService->updateOrganization($organization, $validatedData);
             $message = 'Organization Updated Successfully';
             return Redirect::route('organizations.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
@@ -71,20 +69,20 @@ class OrganizationController extends Controller
     public function destroy(Organization $organization)
     {
         try {
-            $isDeleted = $this->organizationService->deleteOrganization($organization);
+            $this->organizationService->deleteOrganization($organization);
             $message = 'Organization Deleted Successfully';
             return Redirect::route('organizations.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
             Log::error($e->getMessage());
             return Redirect::route('organizations.index')->with(Constants::ERROR, Constants::DEFAULTMESSAGE);
         }
-        
     }
 
     public function switchOrganization(SwitchOrganizationRequest $request, Organization $organization)
     {
         try {
-            $isSwitched = $this->organizationService->switchOrganization($organization);
+            $this->organizationService->switchOrganization($organization);
+            OrganizationSession::setCurrentOrg($organization->id);
             $message = 'Organization Switched Successfully';
             return Redirect::route('organizations.index')->with(Constants::SUCCESS, $message);
         } catch (Exception $e) {
@@ -96,7 +94,8 @@ class OrganizationController extends Controller
     public function members()
     {
         try {
-            $members = $this->organizationService->getOrganizationMembers($this->currentOrganizationId);
+            $orgId = OrganizationSession::getCurrentOrg();
+            $members = $this->organizationService->getOrganizationMembers($orgId);
             $responseData = [
                 'members' => $members,
             ];
@@ -105,6 +104,5 @@ class OrganizationController extends Controller
             Log::error($e->getMessage());
             abort(500, Constants::DEFAULTMESSAGE);
         }
-        
     }
 }

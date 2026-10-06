@@ -6,18 +6,13 @@ use App\Models\Project;
 use App\Models\User;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
-use App\Services\Core\BaseModelService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
-class ProjectService extends BaseModelService
+class ProjectService
 {
     protected $projectRepo;
     protected $organizationRepo;
-
-    public function model(): string
-    {
-        return Project::class;
-    }
 
     public function __construct(ProjectRepositoryInterface $projectRepo, OrganizationRepositoryInterface $organizationRepo)
     {
@@ -25,30 +20,30 @@ class ProjectService extends BaseModelService
         $this->organizationRepo = $organizationRepo;
     }
 
-    public function getProjects($organizationId)
+    public function getProjects(int $orgId): Collection
     {
-        $organization = $this->organizationRepo->getCurrentOrganization($organizationId);
+        $organization = $this->organizationRepo->getCurrentOrganization($orgId);
         return $this->projectRepo->getProjects($organization);
     }
 
-    public function createProject($userId, $organizationId, $validatedData)
+    public function createProject(User $user, int $orgId, array $data): void
     {
-        return DB::transaction(function() use ($userId, $organizationId, $validatedData) {
-            $validatedData = array_merge($validatedData, [
-                'organization_id' => $organizationId,
-                'created_by' => $userId,
+        DB::transaction(function() use ($user, $orgId, $data) {
+            $data = array_merge($data, [
+                'organization_id' => $orgId,
+                'created_by' => $user->id,
             ]);
-            $project = $this->model()::create($validatedData);
+            $project = $this->projectRepo->createProject($data);
             $this->projectRepo->attachOwner($project, $userId);
         });
     }
 
-    public function updateProject(Project $project, $validatedData)
+    public function updateProject(Project $project, array $data): void
     {
-        $project->update($validatedData);
+        $this->projectRepo->updateProject($project, $data);
     }
 
-    public function getProjectDetails(Project $project)
+    public function getProjectDetails(Project $project): Project
     {
         return $this->projectRepo->getProjectDetails($project);
     }

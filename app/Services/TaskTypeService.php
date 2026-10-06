@@ -5,18 +5,13 @@ namespace App\Services;
 use App\Models\TaskType;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
 use App\Repositories\Contracts\TaskTypeRepositoryInterface;
-use App\Services\Core\BaseModelService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class TaskTypeService extends BaseModelService
+class TaskTypeService
 {
     protected $taskTypeRepo;
     protected $organizationRepo;
-
-    public function model(): string
-    {
-        return TaskType::class;
-    }
 
     public function __construct(TaskTypeRepositoryInterface $taskTypeRepo, OrganizationRepositoryInterface $organizationRepo)
     {
@@ -24,38 +19,41 @@ class TaskTypeService extends BaseModelService
         $this->organizationRepo = $organizationRepo;
     }
 
-    public function getTaskTypes($organizationId)
+    public function getTaskTypes(int $orgId): Collection
     {
-        $organization = $this->organizationRepo->getCurrentOrganization($organizationId);
+        $organization = $this->organizationRepo->getCurrentOrganization($orgId);
         return $this->taskTypeRepo->getTaskTypes($organization);
     }
 
-    public function createTaskType($validatedData)
+    public function createTaskType(int $orgId, array $data): void
     {
-        return DB::transaction(function () use ($validatedData) {
-            $organization = $this->organizationRepo->getCurrentOrganization($validatedData['organization_id']);
+        DB::transaction(function () use ($orgId, $data) {
+            $organization = $this->organizationRepo->getCurrentOrganization($orgId);
+            $data = array_merge($data, [
+                'organization_id' => $orgId,
+            ]);
 
-            if($validatedData['is_default']) {
+            if($data['is_default']) {
                 $this->taskTypeRepo->removeDefault($organization);
             }
-            $this->taskTypeRepo->createTaskType($validatedData);
+            $this->taskTypeRepo->createTaskType($data);
         });
     }
 
-    public function updateTaskType(TaskType $taskType, $validatedData)
+    public function updateTaskType(TaskType $taskType, int $orgId, array $data): void
     {
-        return DB::transaction(function () use ($taskType, $validatedData) {
+        DB::transaction(function () use ($taskType, $orgId, $data) {
             
-            if($validatedData['is_default']) {
-                $organization = $this->organizationRepo->getCurrentOrganization($validatedData['organization_id']);
-                $this->taskTypeRepo->removeDefault($organization);
+            if($data['is_default']) {
+                $organization = $this->organizationRepo->getCurrentOrganization($orgId);
+                $this->taskTypeRepo->removeDefault($organization, $taskType);
             }
 
-            $this->taskTypeRepo->updateTaskType($taskType, $validatedData);
+            $this->taskTypeRepo->updateTaskType($taskType, $data);
         });
     }
 
-    public function deleteTaskType(TaskType $taskType)
+    public function deleteTaskType(TaskType $taskType): bool
     {
         return $this->taskTypeRepo->deleteTaskType($taskType);
     }

@@ -11,7 +11,7 @@ class ProjectRepository implements ProjectRepositoryInterface
 {
     protected $model;
 
-    public function model(Project $model)
+    public function __construct(Project $model)
     {
         $this->model = $model;
     }
@@ -19,8 +19,8 @@ class ProjectRepository implements ProjectRepositoryInterface
     public function getProjects(Organization $organization)
     {
         return $organization->projects()
-            ->withCount(['members'])
             ->withCount([
+                'members',
                 'tasks',
                 'tasks as completed_tasks_count' => function ($query) {
                     $query->where('status', 'completed');
@@ -30,11 +30,21 @@ class ProjectRepository implements ProjectRepositoryInterface
             ->get();
     }
 
-    public function attachOwner(Project $project, $userId)
+    public function createProject(array $data)
+    {
+        return $this->model::create($data);
+    }
+
+    public function attachOwner(Project $project, int $userId)
     {
         $project->members()->attach($userId, [
             'role' => 'owner'
         ]);
+    }
+
+    public function updateProject(Project $project, array $data)
+    {
+        $project->update($data);
     }
 
     public function isProjectOwner(Project $project, User $user)
@@ -52,7 +62,7 @@ class ProjectRepository implements ProjectRepositoryInterface
         ]);
     }
 
-    public function syncMembers(Project $project, $syncData): void
+    public function syncMembers(Project $project, array $syncData)
     {
         $project->members()->sync($syncData);
     }

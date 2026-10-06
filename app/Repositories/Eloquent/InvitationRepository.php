@@ -15,22 +15,22 @@ class InvitationRepository implements InvitationRepositoryInterface
         $this->model = $model;
     }
 
-    public function createInvitation($validatedData)
+    public function createInvitation(array $data)
     {
-        return $this->model::create($validatedData);
+        return $this->model::create($data);
     }
 
-    public function findPendingInvitation(Organization $organization, $email)
+    public function findPendingInvitation(Organization $organization, string $email)
     {
         return $organization->invitations()->where('email', $email)->whereNull('accepted_at')->first();
     }
 
-    public function updateInvitation(Invitation $invitation, $data)
+    public function updateInvitation(Invitation $invitation, array $data)
     {
         return $invitation->update($data);
     }
 
-    public function getInvitation($token)
+    public function getInvitation(string $token)
     {
         return $this->model::with(['organization', 'inviter'])->where('token', $token)->first();
     }

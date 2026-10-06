@@ -8,8 +8,8 @@ use App\Models\TaskType;
 interface TaskTypeRepositoryInterface
 {
     public function getTaskTypes(Organization $organization);
-    public function createTaskType($validatedData);
-    public function removeDefault(Organization $organization);
-    public function updateTaskType(TaskType $taskType, $validatedData);
+    public function createTaskType(array $data);
+    public function removeDefault(Organization $organization, TaskType $taskType = null);
+    public function updateTaskType(TaskType $taskType, array $data);
     public function deleteTaskType(TaskType $taskType);
 }
