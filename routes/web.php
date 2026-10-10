@@ -4,6 +4,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\TaskTypeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,7 @@ Route::middleware('auth')->group(function () {
         Route::put('projects/{project}/assign-members', [ProjectController::class, 'assignMembers'])->name('projects.assignMembers');
         
         Route::resource('task-types', TaskTypeController::class)->except(['create', 'edit', 'show']);
+        Route::resource('tags', TagController::class)->except(['create', 'edit', 'show']);
     });
 });
 
