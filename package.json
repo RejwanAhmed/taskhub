@@ -10,6 +10,7 @@
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.0",
         "@rushstack/eslint-patch": "^1.8.0",
+        "@types/toastr": "^2.1.44",
         "@vitejs/plugin-vue": "^6.0.0",
         "@vue/eslint-config-prettier": "^9.0.0",
         "@vue/eslint-config-typescript": "^13.0.0",
@@ -28,6 +29,15 @@
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
+        "@tiptap/extension-color": "^3.32.0",
+        "@tiptap/extension-highlight": "^3.32.0",
+        "@tiptap/extension-image": "^3.32.0",
+        "@tiptap/extension-link": "^3.32.0",
+        "@tiptap/extension-text-style": "^3.32.0",
+        "@tiptap/extension-underline": "^3.32.0",
+        "@tiptap/pm": "^3.32.0",
+        "@tiptap/starter-kit": "^3.32.0",
+        "@tiptap/vue-3": "^3.32.0",
         "bootstrap": "^5.3.7",
         "bootstrap-icons": "^1.13.1",
         "datatables.net-bs5": "^2.3.7",

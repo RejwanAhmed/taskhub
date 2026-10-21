@@ -5,6 +5,7 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskTypeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -38,13 +39,23 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('invitations')->name('invitations.')->group(function () {
             Route::post('/', [InvitationController::class, 'store'])->name('store');
-        });
-
-        Route::resource('projects', ProjectController::class)->except(['create', 'edit', 'destroy']);
-        Route::put('projects/{project}/assign-members', [ProjectController::class, 'assignMembers'])->name('projects.assignMembers');
+        });        
         
         Route::resource('task-types', TaskTypeController::class)->except(['create', 'edit', 'show']);
         Route::resource('tags', TagController::class)->except(['create', 'edit', 'show']);
+
+        Route::resource('projects', ProjectController::class)->except(['create', 'edit', 'destroy']);
+        Route::prefix('projects/{project}')->group(function () {
+            Route::put('assign-members', [ProjectController::class, 'assignMembers'])->name('projects.assignMembers');
+            Route::get('tasks', [TaskController::class, 'index'])->name('projects.tasks.index');
+            Route::post('tasks', [TaskController::class, 'store'])->name('projects.tasks.store');
+            Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('projects.tasks.destroy');
+            Route::put('tasks/{task}', [TaskController::class, 'update'])->name('projects.tasks.update');
+            Route::get('tasks/{task}/subtasks', [TaskController::class, 'getSubtasks'])->name('projects.tasks.subtasks.index');
+            Route::post('tasks/{task}/subtasks', [TaskController::class, 'storeSubtask'])->name('projects.tasks.subtasks.store');
+            Route::put('/tasks/{task}/subtasks/{subtask}', [TaskController::class, 'updateSubtask'])->name('projects.tasks.subtasks.update');
+            Route::delete('tasks/{task}/subtasks/{subtask}', [TaskController::class, 'destroySubtask'])->name('projects.tasks.subtasks.destroy');
+        });
     });
 });
 

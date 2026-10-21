@@ -9,6 +9,8 @@ use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Models\Project;
 use App\Services\OrganizationService;
 use App\Services\ProjectService;
+use App\Services\TagService;
+use App\Services\TaskTypeService;
 use App\Support\OrganizationSession;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -20,11 +22,15 @@ class ProjectController extends Controller
 {
     protected  ProjectService $projectService;
     protected  OrganizationService $organizationService;
+    protected  TagService $tagService;
+    protected  TaskTypeService $taskTypeService;
 
-    public function __construct(ProjectService $projectService, OrganizationService $organizationService)
+    public function __construct(ProjectService $projectService, OrganizationService $organizationService, TagService $tagService, TaskTypeService $taskTypeService)
     {
         $this->projectService = $projectService;
         $this->organizationService = $organizationService;
+        $this->tagService = $tagService;
+        $this->taskTypeService = $taskTypeService;
     }
 
     public function index()
@@ -79,9 +85,13 @@ class ProjectController extends Controller
             $projectDetails = $this->projectService->getProjectDetails($project);
             $orgId = OrganizationSession::getCurrentOrg();
             $activeUsers = $this->organizationService->getOrganizationActiveUsers($orgId);
+            $tags = $this->tagService->getTags($orgId);
+            $taskTypes = $this->taskTypeService->getTaskTypes($orgId);
             $responseData = [
                 'project' => $projectDetails->toArray(),
                 'activeUsers' => $activeUsers->toArray(),
+                'tags' => $tags,
+                'taskTypes' => $taskTypes,
             ];
             return Inertia::render('Project/Show', $responseData);
         } catch (AuthorizationException $e) {

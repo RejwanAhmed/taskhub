@@ -1,112 +1,169 @@
 <template>
-    <Head title="Projects" />
+    <Head :title="project.name" />
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="h5 fw-semibold">Project Details</h2>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="h5 fw-semibold mb-0">{{ project.name }}</h2>
+                <span class="badge fw-normal" :class="statusColor(project.status)">
+                    {{ statusLabel(project.status) }}
+                </span>
+            </div>
         </template>
+
         <div class="container-fluid">
-            <!-- Project Info -->
-            <div class="card border-0 shadow rounded-3 mb-3">
-                <div class="card-body py-3 px-4">
-                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                        <div>
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <h2 class="h5 fw-bold mb-0">
-                                    {{ project.name }}
-                                </h2>
-                                <span class="badge" :class="statusColor(project.status)">
-                                    {{ statusLabel(project.status) }}
-                                </span>
-                            </div>
-                        </div>
 
-                        <!-- Dates -->
-                        <div class="d-flex align-items-center gap-4 small">
-                            <div>
-                                <span class="text-muted d-block">
-                                    Start
-                                </span>
-                                <span class="fw-semibold">
-                                    {{ project.start_date || '--' }}
-                                </span>
-                            </div>
-                            <div>
-                                <span class="text-muted d-block">
-                                    End
-                                </span>
-                                <span class="fw-semibold">
-                                    {{ project.end_date || '--' }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Progress -->
-                    <div class="mt-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <small class="text-muted">
-                                {{ project.completed_tasks_count ?? 0 }} / {{ project.tasks_count ?? 0 }} tasks
-                            </small>
-                            <small class="fw-semibold" :style="{ color: progressColor(project) }">
-                                {{ progressPct(project) }}%
-                            </small>
-                        </div>
-                        <div class="progress" style="height: 5px;">
-                            <div class="progress-bar" role="progressbar" :style="{ width: progressPct(project) + '%', background: progressColor(project)}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- <div class="project-accent" :style="{ background: project.color ?? '#0d9488' }"></div> -->
-            </div>
-
-            <div class="d-flex flex-wrap align-items-center gap-4 mb-4 mt-3">
-                <div class="input-group" style="max-width: 300px; min-width: 160px;">
-                    <span class="input-group-text bg-white border-end-0">
-                        <i class="bi bi-search text-muted" style="font-size: 0.8rem;"></i>
+            <!-- Action bar -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <small class="text-muted">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    {{ project.start_date || '--' }} → {{ project.end_date || '--' }}
+                    <span class="ms-3" :style="{ color: progressColor(project) }">
+                        {{ progressPct(project) }}% complete
                     </span>
-                    <input v-model="search" type="text" class="form-control border-start-0" placeholder="Search tasks..." />
+                </small>
+                <div class="d-flex gap-2">
+                    <button class="btn bg-teal text-white" @click="showMembersModal = true">
+                        <i class="bi bi-person-plus me-1"></i> Members
+                    </button>
+                    <button class="btn bg-teal text-white" @click="showCreateTaskModal = true">
+                        <i class="bi bi-plus-lg me-1"></i> New Task
+                    </button>
                 </div>
-
-                <select v-model="statusFilter" class="form-select" style="width: auto;">
-                    <option value="">All statuses</option>
-                    <option value="active">Active</option>
-                    <option value="planning">Planning</option>
-                    <option value="on_hold">On hold</option>
-                    <option value="completed">Completed</option>
-                </select>
-
-                <button class="btn bg-teal text-white ms-auto" @click="showMemebrsModal = true">
-                    <i class="bi bi-person-plus me-1"></i> Assign User
-                </button>
             </div>
+
+            <!-- Toolbar -->
+            <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+                <div class="input-group" style="max-width:260px;">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search text-muted" style="font-size:0.8rem;"></i>
+                    </span>
+                    <input v-model="search" type="text" class="form-control border-start-0" placeholder="Search tasks..."/>
+                </div>
+                <select v-model="priorityFilter" class="form-select" style="width:auto;">
+                    <option value="">All priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                </select>
+            </div>
+
+            <!-- Kanban Board -->
+            <KanbanBoard
+                :columns="columns"
+                :tasks="filteredTasks"
+                :loading="loading"
+                @openTask="openTaskModal"
+                @taskDeleted="fetchTasks"
+            />
+
+            <TaskDetailModal
+                v-if="selectedTask"
+                :task="selectedTask"
+                :project="project"
+                :tags="tags"
+                :taskTypes="taskTypes"
+                @close="selectedTask = null"
+                @updated="fetchTasks"
+            />
+
         </div>
-        <div v-if="showMemebrsModal">
-            <ManageProjectMembers
-            :showMemebrsModal="showMemebrsModal"
+
+        <!-- Modals -->
+        <ManageProjectMembers
+            v-if="showMembersModal"
+            :showMemebrsModal="showMembersModal"
             :project="project"
             :activeUsers="activeUsers"
-            @close="showMemebrsModal = false"
+            @close="showMembersModal = false"
         />
-        </div>
+
+        <CreateTaskModal
+            v-if="showCreateTaskModal"
+            :project="project"
+            :tags="tags"
+            :taskTypes="taskTypes"
+            @close="showCreateTaskModal = false"
+            @created="fetchTasks"
+        />
+
     </AuthenticatedLayout>
 </template>
 
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { ref, computed, onMounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import axios from 'axios';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ManageProjectMembers from '@/Pages/Project/Modal/ManageProjectMembers.vue';
+import CreateTaskModal from '@/Pages/Task/Modal/CreateTaskModal.vue';
+import TaskDetailModal from '@/Pages/Task/Modal/TaskDetailModal.vue';
+import KanbanBoard from '@/Components/Kanban/KanbanBoard.vue';
 import { statusColor, statusLabel, progressPct, progressColor } from '@/Utils/projectStatus';
-import { Project } from  '@/types/interfaces/project';
-import { User } from  '@/types/interfaces/user';
+import { Project } from '@/types/interfaces/project';
+import { User } from '@/types/interfaces/user';
+import { Tag } from '@/types/interfaces/tag';
+import { TaskType } from '@/types/interfaces/taskType';
+import { Task } from '@/types/interfaces/task';
 
 const props = defineProps<{
     project: Project;
     activeUsers: User[];
+    tags: Tag[];
+    taskTypes: TaskType[];
 }>();
 
-const search = ref('');
-const statusFilter = ref('');
-const showMemebrsModal = ref(false);
+// ── State ──────────────────────────────────────────────────────────────────────
+const tasks               = ref<Record<string, any>[]>([]);
+const loading             = ref(true);
+const search              = ref('');
+const priorityFilter      = ref('');
+const showMembersModal    = ref(false);
+const showCreateTaskModal = ref(false);
+const selectedTask    = ref<Task | null>(null);
+
+// ── Kanban columns ─────────────────────────────────────────────────────────────
+const columns = [
+    { status: 'to_do',       label: 'To Do',      color: '#6B7280' },
+    { status: 'in_progress', label: 'In Progress', color: '#3B82F6' },
+    { status: 'in_review',   label: 'In Review',   color: '#F59E0B' },
+    { status: 'on_hold',     label: 'On Hold',     color: '#EF4444' },
+    { status: 'completed',   label: 'Completed',   color: '#10B981' },
+];
+
+// ── Fetch tasks ────────────────────────────────────────────────────────────────
+const fetchTasks = async () => {
+    loading.value = true;
+    try {
+        const { data } = await axios.get(route('projects.tasks.index', props.project.id));
+        tasks.value = data.tasks;
+
+        if (selectedTask.value) {
+            const updated = data.tasks.find((t: any) => t.id === selectedTask.value!.id);
+            if (updated) selectedTask.value = updated;
+        }
+    } finally {
+        loading.value = false;
+    }
+};
+
+const openTaskModal = (task: Task) => {
+    selectedTask.value = task;
+};
+
+onMounted(fetchTasks);
+
+// ── Filters ────────────────────────────────────────────────────────────────────
+const filteredTasks = computed(() => {
+    let list = tasks.value;
+    const q = search.value.toLowerCase().trim();
+    if (q) list = list.filter(t => t.title.toLowerCase().includes(q));
+    if (priorityFilter.value) list = list.filter(t => t.priority === priorityFilter.value);
+    return list;
+});
+
+// ── Actions ────────────────────────────────────────────────────────────────────
+const editTask = (task: any) => {
+    // Step 3 — wire up edit modal
+};
 </script>

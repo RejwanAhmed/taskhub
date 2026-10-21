@@ -37,13 +37,13 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                                         <li>
-                                            <button class="dropdown-item" @click="openOrganizationModal(org)">
+                                            <button class="dropdown-item small" @click="openOrganizationModal(org)">
                                                 <i class="bi bi-pencil me-2 text-teal"></i> Edit
                                             </button>
                                         </li>
                                         <li><hr class="dropdown-divider" /></li>
                                         <li>
-                                            <DeleteConfirmationButton confirm-route="organizations.destroy" :obj="org" :delete-content="org.name"></DeleteConfirmationButton>
+                                            <DeleteConfirmationButton confirm-route="organizations.destroy" :obj="org" :delete-content="org.name" class="dropdown-item small"></DeleteConfirmationButton>
                                         </li>
                                     </ul>
                                 </div>
