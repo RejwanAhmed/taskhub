@@ -210,3 +210,217 @@ h1, h2, h3, h4, h5, h6 {
     padding-right: 2px;
 }
 /* End Assign User */
+
+.kanban-board {
+    overflow-x: auto;
+    min-height: 70vh;
+}
+
+.kanban-board::-webkit-scrollbar { height: 6px; }
+.kanban-board::-webkit-scrollbar-track { background: transparent; }
+.kanban-board::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+.kanban-column {
+    width: 280px;
+    background: #f3f4f6;
+    border-radius: 12px;
+    padding: 12px;
+    height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-cards {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.kanban-col-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.kanban-card {
+    border-radius: 10px !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10) !important;
+}
+
+.kanban-empty {
+    border: 1.5px dashed #e5e7eb;
+    border-radius: 10px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Skeleton */
+.skeleton {
+    background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+    border-radius: 4px;
+}
+.skeleton-text  { height: 12px; }
+.skeleton-badge { height: 20px; width: 56px; border-radius: 99px; }
+
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Rich Text Editor */
+.rich-editor {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.rich-editor-toolbar {
+    background: #f8f9fa;
+}
+
+.editor-btn {
+    background: transparent;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    color: #495057;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+    line-height: 1;
+}
+
+.editor-btn:hover {
+    background: #e9ecef;
+    color: #212529;
+}
+
+.editor-btn.active {
+    background: #0d9488;
+    color: #fff;
+}
+
+.editor-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.editor-divider {
+    width: 1px;
+    background: #dee2e6;
+    margin: 2px 4px;
+    align-self: stretch;
+}
+
+.rich-editor-content {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.rich-editor-area {
+    min-height: 160px;
+    padding: 12px 14px;
+    outline: none;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Tiptap content styling */
+.rich-editor-area h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+.rich-editor-area h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.4rem; }
+.rich-editor-area h3 { font-size: 1rem;   font-weight: 600; margin-bottom: 0.3rem; }
+.rich-editor-area ul,
+.rich-editor-area ol  { padding-left: 1.4rem; margin-bottom: 0.5rem; }
+.rich-editor-area blockquote {
+    border-left: 3px solid #0d9488;
+    padding-left: 1rem;
+    color: #6c757d;
+    margin: 0.5rem 0;
+}
+.rich-editor-area pre {
+    background: #f3f4f6;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    overflow-x: auto;
+}
+.rich-editor-area code {
+    background: #f3f4f6;
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 0.85rem;
+}
+.rich-editor-area p { margin-bottom: 0.4rem; }
+.rich-editor-area p:last-child { margin-bottom: 0; }
+
+.editor-color-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 28px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #495057;
+    transition: background 0.12s;
+}
+.editor-color-wrap:hover { background: #e9ecef; }
+.editor-color-wrap input[type="color"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+}
+
+/* Link */
+.editor-link {
+    color: #0d9488;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Image */
+.rich-editor-area img {
+    max-width: 100%;
+    border-radius: 6px;
+    margin: 0.5rem 0;
+}
+
+/* Subtask item */
+.subtask-item {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    transition: background 0.12s;
+}
+
+.subtask-item:hover {
+    background: #f0fdf9;
+    border-color: #99f6e4;
+}
+
+.subtask-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}

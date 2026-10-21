@@ -10,8 +10,12 @@
                 <div class="col-6 col-md-3" v-for="stat in stats" :key="stat.label">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body shadow py-3">
-                            <p class="text-muted small mb-1">{{ stat.label }}</p>
-                            <p class="fw-bold fs-4 mb-0" :style="{ color: stat.color }">{{ stat.value }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="text-muted small mb-0">{{ stat.label }}</p>
+                                <p class="fw-bold fs-4 mb-0 ms-2" :style="{ color: stat.color }">
+                                    {{ stat.value }}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -64,13 +68,13 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                                         <li>
-                                            <button class="dropdown-item" @click="openProjectModal(project)">
+                                            <button class="dropdown-item small" @click="openProjectModal(project)">
                                                 <i class="bi bi-pencil me-2 text-teal"></i> Edit
                                             </button>
                                         </li>
                                         <li><hr class="dropdown-divider" /></li>
                                         <li>
-                                            <button class="dropdown-item" @click="projectDetails(project)">
+                                            <button class="dropdown-item small" @click="projectDetails(project)">
                                                 <i class="bi bi-eye me-2 text-teal"></i> Details
                                             </button>
                                         </li>
