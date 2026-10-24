@@ -45,6 +45,9 @@
                         :use-axios="true"
                         @deleted="onSubtaskDeleted"
                     />
+                    <button class="btn btn-sm btn-light py-0 px-1" @click.stop="selectedCommentTask = subtask" title="Comments">
+                        <i class="bi bi-chat-left-text text-teal"></i>
+                    </button>
                 </div>
             </div>
 
@@ -139,6 +142,13 @@
                 @close="selectedSubtask = null"
                 @updated="onSubtaskUpdated"
             />
+
+            <CommentModal
+                v-if="selectedCommentTask"
+                :task="selectedCommentTask"
+                :parent-task-title="task.title"
+                @close="selectedCommentTask = null"
+            />
         </div>
     </div>
 </template>
@@ -156,6 +166,7 @@ import { Task } from '@/types/interfaces/task';
 import { Project } from '@/types/interfaces/project';
 import { TaskType } from '@/types/interfaces/taskType';
 import { priorityClass, priorityLabel, avatarColor, initials, formatDate } from '@/Utils/taskHelpers';
+import CommentModal from '@/Pages/Task/Comment/Modal/CommentModal.vue';
 
 const props = defineProps<{
     task: Task;
@@ -174,7 +185,7 @@ const showForm      = ref(false);
 const processing    = ref(false);
 const selectedSubtask = ref<any | null>(null);
 const formErrors    = reactive<Record<string, string>>({});
-
+const selectedCommentTask = ref<any | null>(null);
 
 // ── Status dot color ───────────────────────────────────────────────────────────
 const statusColor = (status: string) => ({

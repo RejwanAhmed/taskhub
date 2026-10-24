@@ -424,3 +424,19 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: 50%;
     flex-shrink: 0;
 }
+
+/* Comment Section */
+.comment-item {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.comment-content {
+    line-height: 1.6;
+    color: #374151;
+}

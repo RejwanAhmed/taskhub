@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProfileController;
@@ -56,6 +57,13 @@ Route::middleware('auth')->group(function () {
             Route::put('/tasks/{task}/subtasks/{subtask}', [TaskController::class, 'updateSubtask'])->name('projects.tasks.subtasks.update');
             Route::delete('tasks/{task}/subtasks/{subtask}', [TaskController::class, 'destroySubtask'])->name('projects.tasks.subtasks.destroy');
         });
+        Route::prefix('tasks/{task}')->group(function () {
+            Route::get('comments', [CommentController::class, 'index'])->name('tasks.comments.index');
+            Route::post('comments', [CommentController::class, 'store'])->name('tasks.comments.store');
+            Route::put('comments/{comment}', [CommentController::class, 'update'])->name('tasks.comments.update');
+            Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('tasks.comments.destroy');
+        });
+        
     });
 });
 

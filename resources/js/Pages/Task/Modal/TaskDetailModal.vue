@@ -23,7 +23,13 @@
                             </span>
                         </div>
                     </div>
-                    <button type="button" class="btn-close" @click="emit('close')"></button>
+                    <!-- <button type="button" class="btn-close" @click="emit('close')"></button> -->
+                    <div class="d-flex align-items-center gap-2 ms-auto">
+                        <button class="btn btn-sm btn-light" @click="showCommentModal = true">
+                            <i class="bi bi-chat-left-text me-1 text-teal"></i> Comments
+                        </button>
+                        <button type="button" class="btn-close" @click="emit('close')"></button>
+                    </div>
                 </div>
 
                 <!-- Tabs -->
@@ -40,16 +46,6 @@
                                 <span v-if="task.sub_tasks_count > 0" class="badge bg-secondary bg-opacity-10 text-secondary ms-1">
                                     {{ task.sub_tasks_count }}
                                 </span>
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" :class="{ active: activeTab === 'comments' }" @click="activeTab = 'comments'">
-                                <i class="bi bi-chat-left-text me-1"></i> Comments
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" :class="{ active: activeTab === 'attachments' }" @click="activeTab = 'attachments'">
-                                <i class="bi bi-paperclip me-1"></i> Attachments
                             </button>
                         </li>
                     </ul>
@@ -73,22 +69,15 @@
                         :taskTypes="taskTypes"
                         @updated="emit('updated')"
                     />
-
-                    <!-- <TaskCommentTab
-                        v-else-if="activeTab === 'comments'"
-                        :task="task"
-                    />
-
-                    <TaskAttachmentTab
-                        v-else-if="activeTab === 'attachments'"
-                        :task="task"
-                    /> -->
-
                 </div>
-
             </div>
         </div>
     </div>
+    <CommentModal
+        v-if="showCommentModal"
+        :task="task"
+        @close="showCommentModal = false"
+    />
 </template>
 
 <script setup lang="ts">
@@ -100,8 +89,7 @@ import { TaskType } from '@/types/interfaces/taskType';
 import { priorityClass, priorityLabel } from '@/Utils/taskHelpers';
 import TaskDetailTab from '@/Pages/Task/Tab/TaskDetailTab.vue';
 import TaskSubtaskTab from '@/Pages/Task/Tab/TaskSubtaskTab.vue';
-// import TaskCommentTab from '@/Pages/Task/Components/TaskCommentTab.vue';
-// import TaskAttachmentTab from '@/Pages/Task/Components/TaskAttachmentTab.vue';
+import CommentModal from '@/Pages/Task/Comment/Modal/CommentModal.vue';
 
 const props = defineProps<{
     task: Task;
@@ -117,5 +105,6 @@ const emit = defineEmits<{
     updated: [];
 }>();
 
-const activeTab = ref<'details' | 'subtasks' | 'comments' | 'attachments'>('details');
+const activeTab = ref<'details' | 'subtasks'>('details');
+const showCommentModal = ref(false);
 </script>
