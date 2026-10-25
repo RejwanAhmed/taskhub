@@ -46,27 +46,56 @@
                 </div>
 
                 <!-- Comment input -->
-                <div class="modal-footer border-top-0 bg-light rounded-bottom-4">
-                    <!-- Current user avatar -->
-                    <div class="avatar-circle text-white flex-shrink-0" style="width:32px;height:32px;font-size:0.75rem;background:#0d9488;">
-                        <i class="bi bi-person"></i>
-                    </div>
+                <div class="modal-footer border-top-0 bg-light rounded-bottom-4 d-flex flex-column gap-2">
 
-                    <div class="flex-grow-1">
-                        <div class="input-group">
-                            <textarea v-model="content" class="form-control border-end-0" rows="2" placeholder="Write a comment..." style="resize:none;"></textarea>
-                            <span class="input-group-text bg-white border-start-0 align-items-end pb-2">
-                                <button type="button" class="btn btn-sm p-0" title="Attach file">
-                                    <i class="bi bi-paperclip text-teal fs-5"></i>
-                                </button>
-                            </span>
+                    <div class="d-flex gap-2 align-items-start w-100">
+                        <!-- Avatar -->
+                        <div class="avatar-circle text-white flex-shrink-0" style="width:32px;height:32px;font-size:0.75rem;background:#0d9488;">
+                            <i class="bi bi-person"></i>
                         </div>
-                        <span v-if="formErrors.content" class="text-danger" style="font-size:0.8rem;">
-                            {{ formErrors.content }}
-                        </span>
+
+                        <div class="flex-grow-1">
+                            <div class="input-group">
+                                <textarea v-model="content" class="form-control border-end-0" rows="2" placeholder="Write a comment..." style="resize:none;"></textarea>
+                                <span class="input-group-text bg-white border-start-0 align-items-end pb-2">
+                                    <button type="button" class="btn btn-sm p-0" title="Attach file" :disabled="selectedFiles.length >= 5" @click="fileInput?.click()">
+                                        <i class="bi bi-paperclip text-teal fs-5"></i>
+                                    </button>
+                                    <input ref="fileInput" type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.txt" class="d-none" @change="onFileSelect"/>
+                                </span>
+                            </div>
+
+                            <!-- Validation error -->
+                            <span v-if="formErrors.content" class="text-danger" style="font-size:0.8rem;">
+                                {{ formErrors.content }}
+                            </span>
+
+                            <!-- File preview -->
+                            <div v-if="selectedFiles.length > 0" class="d-flex flex-wrap gap-2 mt-2">
+                                <div v-for="(file, idx) in selectedFiles" :key="idx" class="file-preview-item d-flex align-items-center gap-1 px-2 py-1 rounded-3">
+                                    <i :class="fileIconFromMime(file.type)" class="text-teal" style="font-size:0.8rem;"></i>
+                                    <span style="font-size:0.75rem; max-width:100px;" class="text-truncate">
+                                        {{ file.name }}
+                                    </span>
+                                    <span class="text-muted" style="font-size:0.7rem;">
+                                        {{ formatFileSize(file.size) }}
+                                    </span>
+                                    <button type="button" class="btn btn-sm p-0 ms-1" @click="removeFile(idx)" >
+                                        <i class="bi bi-x text-danger" style="font-size:0.8rem;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- files error -->
+                            <span v-if="formErrors['files.0'] || formErrors['files']" class="text-danger d-block" style="font-size:0.8rem;">
+                                {{ formErrors['files.0'] || formErrors['files'] }}
+                            </span>
+
+                        </div>
+
+                        <SubmitButton label="Send" :processing="processing" @click="submitComment" />
                     </div>
 
-                    <SubmitButton label="Send" :processing="processing" @click="submitComment" />
                 </div>
             </div>
         </div>
@@ -83,10 +112,13 @@ import { toast } from '@/Utils/toast';
 import { handleAxiosError } from '@/Utils/handleAxiosError';
 import SubmitButton from '@/Components/Button/SubmitButton.vue';
 import { usePage } from '@inertiajs/vue3';
+import { fileIconFromMime, formatFileSize } from '@/Utils/fileHelper';
 
 const processing = ref(false);
 const formErrors = reactive<Record<string, string>>({});
 const content    = ref('');
+const selectedFiles = ref<File[]>([]);
+const fileInput = ref<HTMLInputElement | null>(null);
 
 const page = usePage();
 const currentUserId = computed(() => (page.props.auth as any).user.id);
@@ -103,15 +135,44 @@ const emit = defineEmits<{
 const comments = ref<Comment[]>([]);
 const loading  = ref(true);
 
+const onFileSelect = (e: Event) => {
+    const input = e.target as HTMLInputElement;
+    if (!input.files) return;
+
+    const newFiles = Array.from(input.files);
+
+    // max 5 files total
+    const remaining = 5 - selectedFiles.value.length;
+    const toAdd = newFiles.slice(0, remaining);
+    selectedFiles.value.push(...toAdd);
+
+    // reset input so same file can be selected again
+    input.value = '';
+};
+
+const removeFile = (idx: number) => {
+    selectedFiles.value.splice(idx, 1);
+};
+
 const submitComment = async () => {
     processing.value = true;
     Object.keys(formErrors).forEach(k => delete formErrors[k]);
 
     try {
-        const response = await axios.post(route('tasks.comments.store', props.task.id),{ content: content.value });
+        const formData = new FormData();
+        if (content.value) formData.append('content', content.value);
+        selectedFiles.value.forEach(file => formData.append('files[]', file));
+
+        const response = await axios.post(
+            route('tasks.comments.store', props.task.id),
+            formData,
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+        );
+
         toast.success(response.data.success);
         comments.value.push(response.data.comment);
         content.value = '';
+        selectedFiles.value = [];
     } catch (e: any) {
         handleAxiosError(e, formErrors);
     } finally {
@@ -122,7 +183,7 @@ const submitComment = async () => {
 const onCommentUpdated = (updatedComment: Comment) => {
     const idx = comments.value.findIndex(c => c.id === updatedComment.id);
     if (idx !== -1) {
-        comments.value.splice(idx, 1, { ...comments.value[idx], ...updatedComment });
+        comments.value.splice(idx, 1, updatedComment);
     }
 };
 

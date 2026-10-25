@@ -22,15 +22,22 @@ class CreateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => 'required|string',
+            'content' => 'nullable|string|required_without:files',
+            'files' => 'nullable|array|max:5',
+            'files.*' => 'file|max:5120|mimes:jpg,jpeg,png,pdf,doc,docx,xls,xlsx,txt|mimetypes:image/jpeg,image/png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain',
         ];
     }
     
     public function messages(): array
     {
         return [
-            'content.required' => 'Comment content is required.',
-            'content.string'   => 'Comment content must be a valid string.',
+            'content.required_without' => 'Please write a comment or attach a file.',
+
+            'files.max'                => 'You can upload a maximum of 5 files.',
+            'files.*.file'             => 'Invalid file.',
+            'files.*.max'              => 'Each file must not exceed 5MB.',
+            'files.*.mimes'            => 'Allowed types: jpg, jpeg, png, pdf, doc, docx, xls, xlsx, txt.',
+            'files.*.mimetypes'        => 'Invalid file content. File type does not match its extension.',
         ];
     }
 }

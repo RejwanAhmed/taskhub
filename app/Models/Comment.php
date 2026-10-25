@@ -14,13 +14,18 @@ class Comment extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
-        'update_at' => 'datetime',
+        'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
     public function commentable()
     {
         return $this->morphTo();
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 
     public function user()
