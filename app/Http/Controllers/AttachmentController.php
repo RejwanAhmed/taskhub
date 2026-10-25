@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants\Constants;
 use App\Exceptions\BusinessException;
-use App\Http\Requests\CreateAttachmentRequest;
+use App\Http\Requests\Attachment\CreateAttachmentRequest;
 use App\Models\Comment;
 use App\Services\AttachmentService;
 use Exception;
