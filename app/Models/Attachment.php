@@ -9,7 +9,9 @@ class Attachment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['attachable_type', 'attachable_id', 'user_id', 'file_size', 'file_type', 'file_name', 'mime_type'];
+    const UPDATED_AT = null;
+
+    protected $fillable = ['attachable_type', 'attachable_id', 'user_id', 'file_size', 'file_path', 'file_name', 'mime_type'];
 
     protected $casts = [
         'file_size' => 'integer',

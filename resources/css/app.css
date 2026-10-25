@@ -440,3 +440,19 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.6;
     color: #374151;
 }
+/* File Icon */
+.file-preview-item {
+    background: #f0fdf9;
+    border: 1px solid #99f6e4;
+    font-size: 0.75rem;
+}
+
+.attachment-item {
+    background: #f0fdf9;
+    border: 1px solid #99f6e4;
+    transition: background 0.12s;
+}
+
+.attachment-item:hover {
+    background: #ccfbf1;
+}

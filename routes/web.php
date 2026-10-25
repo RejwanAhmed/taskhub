@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\OrganizationController;
@@ -63,6 +64,7 @@ Route::middleware('auth')->group(function () {
             Route::put('comments/{comment}', [CommentController::class, 'update'])->name('tasks.comments.update');
             Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('tasks.comments.destroy');
         });
+        Route::post('comments/{comment}/attachments', [AttachmentController::class, 'storeForComment'])->name('comments.attachments.store');
         
     });
 });

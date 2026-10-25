@@ -40,7 +40,7 @@ class CommentController extends Controller
         try {
             $validatedData = $request->validated();
             $comment = $this->commentService->createComment($task, auth()->user(), $validatedData);
-            $comment->load('user:id,name');
+            $comment->load(['user:id,name', 'attachments']);
             $message = 'Comment added successfully';
             $responseData = [
                 'comment'   => $comment,
@@ -57,9 +57,14 @@ class CommentController extends Controller
     {
         try {
             $validatedData = $request->validated();
-            $this->commentService->updateComment($comment, auth()->user(), $validatedData['content']);
+            $this->commentService->updateComment($comment, auth()->user(), $validatedData);
+            $comment->load(['user:id,name', 'attachments']);
             $message = 'Comment updated successfully';
-            return response()->json([Constants::SUCCESS => $message]);
+            $responseData = [
+                'comment'   => $comment,
+                Constants::SUCCESS => $message,
+            ];
+            return response()->json($responseData);
         } catch (BusinessException $e) {
             return response()->json([Constants::ERROR => $e->getMessage()], 422);
         } catch (Exception $e) {

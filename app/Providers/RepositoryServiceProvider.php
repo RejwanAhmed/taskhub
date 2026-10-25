@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\AttachmentRepositoryInterface;
 use App\Repositories\Contracts\CommentRepositoryInterface;
 use App\Repositories\Contracts\InvitationRepositoryInterface;
 use App\Repositories\Contracts\OrganizationRepositoryInterface;
@@ -10,6 +11,7 @@ use App\Repositories\Contracts\TagRepositoryInterface;
 use App\Repositories\Contracts\TaskRepositoryInterface;
 use App\Repositories\Contracts\TaskTypeRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\Eloquent\AttachmentRepository;
 use App\Repositories\Eloquent\CommentRepository;
 use App\Repositories\Eloquent\InvitationRepository;
 use App\Repositories\Eloquent\OrganizationRepository;
@@ -36,6 +38,7 @@ class RepositoryServiceProvider extends ServiceProvider
             TagRepositoryInterface::class => TagRepository::class,
             TaskRepositoryInterface::class => TaskRepository::class,
             CommentRepositoryInterface::class => CommentRepository::class,
+            AttachmentRepositoryInterface::class => AttachmentRepository::class,
         ];
 
         foreach($repositories as $interface => $repository) {

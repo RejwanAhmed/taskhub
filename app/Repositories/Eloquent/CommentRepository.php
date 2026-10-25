@@ -18,7 +18,7 @@ class CommentRepository implements CommentRepositoryInterface
 
     public function getComments(Task $task)
     {
-        return $task->comments()->with('user:id,name')->get();
+        return $task->comments()->with(['user:id,name', 'attachments'])->get();
     }
 
     public function createComment(array $data)
