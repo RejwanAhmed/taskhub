@@ -25,7 +25,7 @@ class TaskRepository implements TaskRepositoryInterface
                 'taskType:id,name,color,icon',
                 'tags:id,name,color',
             ])
-            ->withCount('subTasks')
+            ->withCount(['subTasks', 'comments', 'attachments'])
             ->orderBy('position')
             ->get();
     }
@@ -52,6 +52,9 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function getSubtasks(Task $task)
     {
-        return $task->subTasks()->with(['assignee:id,name'])->orderBy('created_at', 'asc')->get();
+        return $task->subTasks()
+            ->with(['assignee:id,name'])
+            ->withCount(['comments', 'attachments'])
+            ->orderBy('created_at', 'asc')->get();
     }
 }

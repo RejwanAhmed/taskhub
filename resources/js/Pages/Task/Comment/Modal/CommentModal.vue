@@ -130,6 +130,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     close: [];
+    updated: [];
 }>();
 
 const comments = ref<Comment[]>([]);
@@ -173,6 +174,7 @@ const submitComment = async () => {
         comments.value.push(response.data.comment);
         content.value = '';
         selectedFiles.value = [];
+        emit('updated');
     } catch (e: any) {
         handleAxiosError(e, formErrors);
     } finally {
@@ -189,6 +191,7 @@ const onCommentUpdated = (updatedComment: Comment) => {
 
 const onCommentDeleted = (commentId: number) => {
     comments.value = comments.value.filter(c => c.id !== commentId);
+    emit('updated');
 };
 
 const fetchComments = async () => {

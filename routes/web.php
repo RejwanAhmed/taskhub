@@ -63,9 +63,11 @@ Route::middleware('auth')->group(function () {
             Route::post('comments', [CommentController::class, 'store'])->name('tasks.comments.store');
             Route::put('comments/{comment}', [CommentController::class, 'update'])->name('tasks.comments.update');
             Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('tasks.comments.destroy');
+
+            Route::get('attachments', [AttachmentController::class, 'index'])->name('tasks.attachments.index');
+            Route::post('attachments', [AttachmentController::class, 'store'])->name('tasks.attachments.store');
+            Route::delete('attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('tasks.attachments.destroy');
         });
-        Route::post('comments/{comment}/attachments', [AttachmentController::class, 'storeForComment'])->name('comments.attachments.store');
-        
     });
 });
 

@@ -27,6 +27,15 @@
                     <div class="d-flex align-items-center gap-2 ms-auto">
                         <button class="btn btn-sm btn-light" @click="showCommentModal = true">
                             <i class="bi bi-chat-left-text me-1 text-teal"></i> Comments
+                            <span v-if="task.comments_count > 0" class="badge bg-secondary bg-opacity-10 text-secondary ms-1">
+                                {{ task.comments_count }}
+                            </span>
+                        </button>
+                        <button class="btn btn-sm btn-light" @click="showAttachmentModal = true">
+                            <i class="bi bi-paperclip me-1 text-teal"></i> Attachments
+                            <span v-if="task.attachments_count > 0" class="badge bg-secondary bg-opacity-10 text-secondary ms-1">
+                                {{ task.attachments_count }}
+                            </span>
                         </button>
                         <button type="button" class="btn-close" @click="emit('close')"></button>
                     </div>
@@ -77,6 +86,14 @@
         v-if="showCommentModal"
         :task="task"
         @close="showCommentModal = false"
+        @updated="emit('updated')"
+    />
+
+    <AttachmentModal
+        v-if="showAttachmentModal"
+        :task="task"
+        @close="showAttachmentModal = false"
+        @updated="emit('updated')"
     />
 </template>
 
@@ -90,6 +107,7 @@ import { priorityClass, priorityLabel } from '@/Utils/taskHelpers';
 import TaskDetailTab from '@/Pages/Task/Tab/TaskDetailTab.vue';
 import TaskSubtaskTab from '@/Pages/Task/Tab/TaskSubtaskTab.vue';
 import CommentModal from '@/Pages/Task/Comment/Modal/CommentModal.vue';
+import AttachmentModal from '@/Pages/Task/Attachment/Modal/AttachmentModal.vue';
 
 const props = defineProps<{
     task: Task;
@@ -107,4 +125,5 @@ const emit = defineEmits<{
 
 const activeTab = ref<'details' | 'subtasks'>('details');
 const showCommentModal = ref(false);
+const showAttachmentModal = ref(false);
 </script>
