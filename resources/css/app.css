@@ -201,7 +201,7 @@ h1, h2, h3, h4, h5, h6 {
     background: #f0fdf9; 
 }
 .user-row--selected { 
-    background: #f0fdf9; border-color: #0d9488; 
+    background: #f0fdf9; border-color: var(--color-teal); 
 }
 
 .user-list {
@@ -311,7 +311,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .editor-btn.active {
-    background: #0d9488;
+    background: var(--color-teal);
     color: #fff;
 }
 
@@ -347,7 +347,7 @@ h1, h2, h3, h4, h5, h6 {
 .rich-editor-area ul,
 .rich-editor-area ol  { padding-left: 1.4rem; margin-bottom: 0.5rem; }
 .rich-editor-area blockquote {
-    border-left: 3px solid #0d9488;
+    border-left: 3px solid var(--color-teal);
     padding-left: 1rem;
     color: #6c757d;
     margin: 0.5rem 0;
@@ -394,7 +394,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Link */
 .editor-link {
-    color: #0d9488;
+    color: var(--color-teal);
     text-decoration: underline;
     cursor: pointer;
 }
@@ -480,14 +480,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-tabs .nav-link:hover {
-    color: #0d9488;
-    border-bottom-color: #0d9488;
+    color: var(--color-teal);
+    border-bottom-color: var(--color-teal);
     background: transparent;
 }
 
 .nav-tabs .nav-link.active {
-    color: #0d9488 !important;
-    border-bottom: 2px solid #0d9488 !important;
+    color: var(--color-teal) !important;
+    border-bottom: 2px solid var(--color-teal) !important;
     background: transparent ;
     font-weight: 600;
 }
