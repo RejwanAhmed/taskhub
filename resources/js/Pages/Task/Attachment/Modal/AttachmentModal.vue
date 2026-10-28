@@ -34,11 +34,7 @@
 
                         <!-- Attachment list -->
                         <div v-else class="d-flex flex-column gap-2 mb-3">
-                            <div
-                                v-for="attachment in attachments"
-                                :key="attachment.id"
-                                class="attachment-row d-flex align-items-center gap-3 p-2 rounded-3"
-                            >
+                            <div v-for="attachment in attachments" :key="attachment.id" class="attachment-row d-flex align-items-center gap-3 p-2 rounded-3">
                                 <!-- Icon -->
                                 <i :class="fileIconFromMime(attachment.mime_type)" class="text-teal fs-5 flex-shrink-0"></i>
 
@@ -49,12 +45,7 @@
                                 </div>
 
                                 <!-- Download -->
-                                <a
-                                    :href="`/storage/${attachment.file_path}`"
-                                    target="_blank"
-                                    class="btn btn-sm"
-                                    title="Download"
-                                >
+                                <a :href="`/storage/${attachment.file_path}`" target="_blank" class="btn btn-sm" title="Download">
                                     <i class="bi bi-download text-teal"></i>
                                 </a>
 
@@ -71,58 +62,41 @@
                                 />
                             </div>
                         </div>
-
-                        <!-- Upload section -->
-                        <div class="border-top pt-3">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <button
-                                    type="button"
-                                    class="btn btn-sm btn-light"
-                                    :disabled="selectedFiles.length >= 5"
-                                    @click="fileInput?.click()"
-                                >
-                                    <i class="bi bi-paperclip text-teal me-1"></i> Add Files
-                                </button>
-                                <small class="text-muted">Max 5 files, 5MB each</small>
-                                <input
-                                    ref="fileInput"
-                                    type="file"
-                                    multiple
-                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.txt"
-                                    class="d-none"
-                                    @change="onFileSelect"
-                                />
-                            </div>
-
-                            <!-- Selected files preview -->
-                            <div v-if="selectedFiles.length > 0" class="d-flex flex-wrap gap-2 mb-2">
-                                <div
-                                    v-for="(file, idx) in selectedFiles"
-                                    :key="idx"
-                                    class="file-preview-item d-flex align-items-center gap-1 px-2 py-1 rounded-3"
-                                >
-                                    <i :class="fileIconFromMime(file.type)" class="text-teal" style="font-size:0.8rem;"></i>
-                                    <span style="font-size:0.75rem; max-width:100px;" class="text-truncate">{{ file.name }}</span>
-                                    <span class="text-muted" style="font-size:0.7rem;">{{ formatFileSize(file.size) }}</span>
-                                    <button type="button" class="btn btn-sm p-0 ms-1" @click="removeFile(idx)">
-                                        <i class="bi bi-x text-danger" style="font-size:0.8rem;"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Upload errors -->
-                            <span v-if="formErrors['files'] || formErrors['files.0']" class="text-danger d-block mb-2" style="font-size:0.8rem;">
-                                {{ formErrors['files'] || formErrors['files.0'] }}
-                            </span>
-
-                            <!-- Upload button -->
-                            <div v-if="selectedFiles.length > 0" class="d-flex justify-content-end">
-                                <SubmitButton label="Upload" :processing="processing" @click="uploadFiles" />
-                            </div>
-                        </div>
                     </div>
                 </div>
 
+                <!-- Upload section — fixed at bottom -->
+                <div class="modal-footer border-top-0 bg-light rounded-bottom-4 d-flex flex-column align-items-start gap-2">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <button type="button" class="btn btn-sm btn-light" :disabled="selectedFiles.length >= 5" @click="fileInput?.click()">
+                            <i class="bi bi-paperclip text-teal me-1"></i> Add Files
+                        </button>
+                        <small class="text-muted">Max 5 files, 5MB each</small>
+                        <input ref="fileInput" type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.txt" class="d-none" @change="onFileSelect"/>
+                    </div>
+
+                    <!-- Selected files preview -->
+                    <div v-if="selectedFiles.length > 0" class="d-flex flex-wrap gap-2 mb-2">
+                        <div v-for="(file, idx) in selectedFiles" :key="idx" class="file-preview-item d-flex align-items-center gap-1 px-2 py-1 rounded-3">
+                            <i :class="fileIconFromMime(file.type)" class="text-teal" style="font-size:0.8rem;"></i>
+                            <span style="font-size:0.75rem; max-width:100px;" class="text-truncate">{{ file.name }}</span>
+                            <span class="text-muted" style="font-size:0.7rem;">{{ formatFileSize(file.size) }}</span>
+                            <button type="button" class="btn btn-sm p-0 ms-1" @click="removeFile(idx)">
+                                <i class="bi bi-x text-danger" style="font-size:0.8rem;"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload errors -->
+                    <span v-if="formErrors['files'] || formErrors['files.0']" class="text-danger d-block mb-2" style="font-size:0.8rem;">
+                        {{ formErrors['files'] || formErrors['files.0'] }}
+                    </span>
+
+                    <!-- Upload button -->
+                    <div v-if="selectedFiles.length > 0" class="d-flex justify-content-end">
+                        <SubmitButton label="Upload" :processing="processing" @click="uploadFiles" />
+                    </div>
+                </div>
             </div>
         </div>
     </div>

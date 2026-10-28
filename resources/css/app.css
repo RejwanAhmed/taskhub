@@ -467,3 +467,31 @@ h1, h2, h3, h4, h5, h6 {
     background: #f0fdf9;
     border-color: #99f6e4;
 }
+
+/* Nav tabs — teal theme */
+.nav-tabs .nav-link {
+    color: #6b7280;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #0d9488;
+    border-bottom-color: #0d9488;
+    background: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d9488 !important;
+    border-bottom: 2px solid #0d9488 !important;
+    background: transparent ;
+    font-weight: 600;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #e5e7eb;
+}
