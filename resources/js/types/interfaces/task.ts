@@ -25,6 +25,8 @@ export interface Task {
     tags: Tag[];
     sub_tasks: Task[];
     sub_tasks_count: number;
+    comments_count: number;
+    attachments_count: number;
     created_at: string;
     updated_at: string;
 }

@@ -456,3 +456,14 @@ h1, h2, h3, h4, h5, h6 {
 .attachment-item:hover {
     background: #ccfbf1;
 }
+
+.attachment-row {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    transition: background 0.12s;
+}
+
+.attachment-row:hover {
+    background: #f0fdf9;
+    border-color: #99f6e4;
+}

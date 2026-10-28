@@ -45,8 +45,21 @@
                         :use-axios="true"
                         @deleted="onSubtaskDeleted"
                     />
-                    <button class="btn btn-sm btn-light py-0 px-1" @click.stop="selectedCommentTask = subtask" title="Comments">
+                    <button class="btn btn-sm py-0 px-1" @click.stop="selectedCommentTask = subtask" title="Comments">
                         <i class="bi bi-chat-left-text text-teal"></i>
+                        <span v-if="subtask.comments_count > 0" class="badge bg-secondary bg-opacity-10 text-secondary ms-1" style="font-size:0.65rem;">
+                            {{ subtask.comments_count }}
+                        </span>
+                    </button>
+                    <button
+                        class="btn btn-sm py-0 px-1"
+                        @click.stop="selectedAttachmentTask = subtask"
+                        title="Attachments"
+                    >
+                        <i class="bi bi-paperclip text-teal"></i>
+                        <span v-if="subtask.attachments_count > 0" class="badge bg-secondary bg-opacity-10 text-secondary ms-1" style="font-size:0.65rem;">
+                            {{ subtask.attachments_count }}
+                        </span>
                     </button>
                 </div>
             </div>
@@ -148,6 +161,15 @@
                 :task="selectedCommentTask"
                 :parent-task-title="task.title"
                 @close="selectedCommentTask = null"
+                @updated="onSubtaskCountUpdated"
+            />
+
+            <AttachmentModal
+                v-if="selectedAttachmentTask"
+                :task="selectedAttachmentTask"
+                :parent-task-title="task.title"
+                @close="selectedAttachmentTask = null"
+                @updated="onSubtaskCountUpdated"
             />
         </div>
     </div>
@@ -167,6 +189,7 @@ import { Project } from '@/types/interfaces/project';
 import { TaskType } from '@/types/interfaces/taskType';
 import { priorityClass, priorityLabel, avatarColor, initials, formatDate } from '@/Utils/taskHelpers';
 import CommentModal from '@/Pages/Task/Comment/Modal/CommentModal.vue';
+import AttachmentModal from '@/Pages/Task/Attachment/Modal/AttachmentModal.vue';
 
 const props = defineProps<{
     task: Task;
@@ -186,6 +209,7 @@ const processing    = ref(false);
 const selectedSubtask = ref<any | null>(null);
 const formErrors    = reactive<Record<string, string>>({});
 const selectedCommentTask = ref<any | null>(null);
+const selectedAttachmentTask = ref<any | null>(null);
 
 // ── Status dot color ───────────────────────────────────────────────────────────
 const statusColor = (status: string) => ({
@@ -258,6 +282,11 @@ const onSubtaskDeleted = () => {
 
 const onSubtaskUpdated = () => {
     selectedSubtask.value = null;
+    fetchSubtasks();
+    emit('updated');
+};
+
+const onSubtaskCountUpdated = () => {
     fetchSubtasks();
     emit('updated');
 };
