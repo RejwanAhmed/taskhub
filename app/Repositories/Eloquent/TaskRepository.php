@@ -57,4 +57,21 @@ class TaskRepository implements TaskRepositoryInterface
             ->withCount(['comments', 'attachments'])
             ->orderBy('created_at', 'asc')->get();
     }
+
+    public function getColumnTasks(Project $project, string $status, int $excludeTaskId)
+    {
+        return $project->tasks()
+            ->where('status', $status)
+            ->where('id', '!=', $excludeTaskId)
+            ->orderBy('position')
+            ->get();
+    }
+
+    public function reorderTask(Task $task, string $status, int $position): void
+    {
+        $task->update([
+            'status'   => $status,
+            'position' => $position,
+        ]);
+    }
 }

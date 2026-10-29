@@ -6,13 +6,19 @@
                 <span class="kanban-col-dot" :style="{ background: col.color }"></span>
                 <span class="fw-semibold small">{{ col.label }}</span>
                 <span class="badge bg-secondary bg-opacity-10 text-secondary">
-                    {{ tasksByStatus(col.status).length }}
+                    {{ columnTasks[col.status]?.length ?? 0 }}
                 </span>
             </div>
 
             <!-- Cards container -->
-            <div class="kanban-cards d-flex flex-column gap-2">
-
+            <VueDraggable v-model="columnTasks[col.status]" 
+                group="tasks"
+                class="kanban-cards d-flex flex-column gap-2"
+                :animation="200"
+                item-key="id"
+                :data-status="col.status"
+                @end="(evt) => onDragEnd(evt)"
+            >
                 <!-- Skeleton loader -->
                 <template v-if="loading">
                     <div v-for="n in 2" :key="n" class="kanban-card card border-0 shadow-sm p-3">
@@ -27,7 +33,7 @@
 
                 <!-- Task cards -->
                 <template v-else>
-                    <div v-for="task in tasksByStatus(col.status)" :key="task.id" class="kanban-card card border-0 shadow-sm p-3">
+                    <div v-for="task in columnTasks[col.status]" :key="task.id" :data-id="task.id" class="kanban-card card border-0 shadow-sm p-3">
                         <!-- Top row: task type + three dot menu -->
                         <div class="d-flex align-items-center justify-content-between mb-2">
                             <span v-if="task.task_type" class="badge fw-normal small"
@@ -55,7 +61,14 @@
                                     </li>
                                     <li><hr class="dropdown-divider" /></li>
                                     <li>
-                                        <DeleteConfirmationButton confirm-route="projects.tasks.destroy" :obj="task" :route-params="{ project: task.project_id, task: task.id }" :use-axios="true" :delete-content="task.title" @deleted="emit('taskDeleted')" class="dropdown-item small"/>
+                                        <DeleteConfirmationButton
+                                            confirm-route="projects.tasks.destroy"
+                                            :obj="task"
+                                            :route-params="{ project: task.project_id, task: task.id }"
+                                            :use-axios="true"
+                                            :delete-content="task.title"
+                                            @deleted="emit('taskDeleted')"
+                                            class="dropdown-item small"/>
                                     </li>
                                 </ul>
                             </div>
@@ -108,32 +121,59 @@
                     </div>
 
                     <!-- Empty column -->
-                    <div v-if="tasksByStatus(col.status).length === 0" class="kanban-empty text-center text-muted" style="font-size:0.8rem;">
+                    <div v-if="columnTasks[col.status]?.length === 0" class="kanban-empty text-center text-muted" style="font-size:0.8rem;">
                         No tasks
                     </div>
                 </template>
-
-            </div>
+            </VueDraggable>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { VueDraggable } from 'vue-draggable-plus';
 import DeleteConfirmationButton from '@/Components/Button/DeleteConfirmationButton.vue';
 import { avatarColor, initials, formatDate, isOverdue, priorityLabel, priorityClass } from '@/Utils/taskHelpers';
 import { Column } from '@/types/interfaces/column';
+import { Project } from '@/types/interfaces/project';
+import { ref, watch  } from 'vue';
 
 const props = defineProps<{
     columns: Column[];
     tasks: Record<string, any>[];
     loading: boolean;
+    project: Project;
 }>();
 
 const emit = defineEmits<{
     openTask: [task: any];
     taskDeleted: [];
+    taskMoved: [taskId: number, status: string, position: number];
 }>();
 
-const tasksByStatus = (status: string) =>
-    props.tasks.filter(t => t.status === status);
+const columnTasks = ref<Record<string, any[]>>({});
+
+const buildColumnTasks = () => {
+    const map: Record<string, any[]> = {};
+    props.columns.forEach(col => {
+        map[col.status] = props.tasks
+            .filter(t => t.status === col.status)
+            .sort((a, b) => a.position - b.position);
+    });
+    columnTasks.value = map;
+};
+
+watch(() => props.tasks, buildColumnTasks, { immediate: true });
+
+
+const onDragEnd = (evt: any) => {
+    const taskId    = Number(evt.item.dataset.id);
+    const newIndex  = evt.newIndex ?? 0;
+    const status    = evt.to.dataset.status; // ← target column status
+
+    console.log('onDragEnd', { taskId, status, newIndex });
+
+    if (isNaN(taskId)) return;
+    emit('taskMoved', taskId, status, newIndex);
+};
 </script>

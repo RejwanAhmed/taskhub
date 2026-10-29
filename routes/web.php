@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
             Route::post('tasks/{task}/subtasks', [TaskController::class, 'storeSubtask'])->name('projects.tasks.subtasks.store');
             Route::put('/tasks/{task}/subtasks/{subtask}', [TaskController::class, 'updateSubtask'])->name('projects.tasks.subtasks.update');
             Route::delete('tasks/{task}/subtasks/{subtask}', [TaskController::class, 'destroySubtask'])->name('projects.tasks.subtasks.destroy');
+            Route::post('tasks/reorder', [TaskController::class, 'reorder'])->name('projects.tasks.reorder');
         });
         Route::prefix('tasks/{task}')->group(function () {
             Route::get('comments', [CommentController::class, 'index'])->name('tasks.comments.index');

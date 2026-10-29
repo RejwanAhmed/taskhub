@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants\Constants;
 use App\Exceptions\BusinessException;
+use App\Http\Requests\Task\CreateReorderRequest;
 use App\Http\Requests\Task\CreateSubTaskRequest;
 use App\Http\Requests\Task\CreateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
@@ -142,6 +143,22 @@ class TaskController extends Controller
             return response()->json([Constants::ERROR => $e->getMessage()], 422);
         } catch (Exception $e) {
             Log::error('Subtask deletion failed: ' . $e->getMessage());
+            return response()->json([Constants::ERROR => Constants::DEFAULTMESSAGE], 500);
+        }
+    }
+
+    public function reorder(CreateReorderRequest $request, Project $project)
+    {
+        try {
+            $validatedData = $request->validated();
+            $orgId = OrganizationSession::getCurrentOrg();
+            $this->taskService->reorderTask($project, $orgId, $validatedData);
+            $message = 'Task reordered successfully';
+            return response()->json([Constants::SUCCESS => $message]);
+        } catch (BusinessException $e) {
+            return response()->json([Constants::ERROR => $e->getMessage()], 422);
+        } catch (Exception $e) {
+            Log::error('Task reorder failed: ' . $e->getMessage());
             return response()->json([Constants::ERROR => Constants::DEFAULTMESSAGE], 500);
         }
     }
