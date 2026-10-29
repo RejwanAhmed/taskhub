@@ -53,8 +53,10 @@
                 :columns="columns"
                 :tasks="filteredTasks"
                 :loading="loading"
+                :project="project"
                 @openTask="openTaskModal"
                 @taskDeleted="fetchTasks"
+                @taskMoved="handleTaskMoved"
             />
 
             <TaskDetailModal
@@ -105,6 +107,8 @@ import { User } from '@/types/interfaces/user';
 import { Tag } from '@/types/interfaces/tag';
 import { TaskType } from '@/types/interfaces/taskType';
 import { Task } from '@/types/interfaces/task';
+import { handleAxiosError } from '@/Utils/handleAxiosError';
+import { toast } from '@/Utils/toast';
 
 const props = defineProps<{
     project: Project;
@@ -162,8 +166,16 @@ const filteredTasks = computed(() => {
     return list;
 });
 
-// ── Actions ────────────────────────────────────────────────────────────────────
-const editTask = (task: any) => {
-    // Step 3 — wire up edit modal
+const handleTaskMoved = async (taskId: number, status: string, position: number) => {
+    try {
+        const response = await axios.post(route('projects.tasks.reorder', props.project.id), {
+            task_id:  taskId,
+            status:   status,
+            position: position,
+        });
+        toast.success(response.data.success);
+    } catch (e) {
+        handleAxiosError(e);
+    }
 };
 </script>

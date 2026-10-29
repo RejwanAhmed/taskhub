@@ -109,4 +109,29 @@ class TaskService
 
         $this->taskRepo->createTask($validatedData);
     }
+
+    public function reorderTask(Project $project, int $orgId, array $validatadData): void
+    {
+        $taskId = $validatadData['task_id'];
+        $status = $validatadData['status'];
+        $position = $validatadData['position'];
+    
+        $task = Task::findOrFail($taskId);
+
+        if ($task->organization_id !== $orgId)
+            throw new BusinessException('This task does not belong to your organization.');
+
+        if ($task->project_id !== $project->id)
+            throw new BusinessException('This task does not belong to this project.');
+
+        DB::transaction(function () use ($project, $task, $status, $position) {
+            $tasksInColumn = $this->taskRepo->getColumnTasks($project, $status, $task->id);
+            $tasksInColumn->splice($position, 0, [$task]);
+  
+            foreach ($tasksInColumn as $index => $t) {
+                \Log::info($index);
+                $this->taskRepo->reorderTask($t, $status, $index);
+            }
+        });
+    }
 }
