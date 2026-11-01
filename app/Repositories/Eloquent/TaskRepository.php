@@ -74,4 +74,13 @@ class TaskRepository implements TaskRepositoryInterface
             'position' => $position,
         ]);
     }
+
+    public function getTaskDetails(Task $task)
+    {
+        return $task->load([
+            'assignee:id,name',
+            'taskType:id,name,color,icon',
+            'tags:id,name,color',
+        ])->loadCount(['subTasks', 'comments', 'attachments']);
+    }
 }

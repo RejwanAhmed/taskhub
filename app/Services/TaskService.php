@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\Task\TaskCreated;
 use App\Exceptions\BusinessException;
 use App\Models\Project;
 use App\Models\Task;
@@ -49,6 +50,9 @@ class TaskService
 
             if (!empty($tagIds))
                 $this->taskRepo->syncTags($task, $tagIds);
+
+            $taskDetails = $this->taskRepo->getTaskDetails($task);
+            broadcast(new TaskCreated($taskDetails))->toOthers();
         });
     }
 
@@ -108,6 +112,7 @@ class TaskService
         ];
 
         $this->taskRepo->createTask($validatedData);
+        
     }
 
     public function reorderTask(Project $project, int $orgId, array $validatadData): void
