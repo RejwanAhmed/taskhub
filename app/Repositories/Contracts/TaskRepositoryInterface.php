@@ -16,4 +16,5 @@ interface TaskRepositoryInterface
     public function getSubtasks(Task $task);
     public function reorderTask(Task $task, string $status, int $position);
     public function getColumnTasks(Project $project, string $status, int $excludeTaskId);
+    public function getTaskDetails(Task $task);
 }

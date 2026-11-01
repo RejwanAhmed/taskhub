@@ -93,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -125,6 +125,7 @@ const priorityFilter      = ref('');
 const showMembersModal    = ref(false);
 const showCreateTaskModal = ref(false);
 const selectedTask    = ref<Task | null>(null);
+// const { channel, leave } = useEcho(`projects.${props.project.id}`, 'private');
 
 // ── Kanban columns ─────────────────────────────────────────────────────────────
 const columns = [
@@ -155,7 +156,19 @@ const openTaskModal = (task: Task) => {
     selectedTask.value = task;
 };
 
-onMounted(fetchTasks);
+// onMounted(fetchTasks);
+onMounted(() => {
+    fetchTasks();
+    window.Echo.private(`projects.${props.project.id}`)
+        .listen('.TaskCreated', (e: any) => {
+            console.log('TaskCreated received', e);
+            fetchTasks();
+        });
+});
+
+onUnmounted(() => {
+    window.Echo.leave(`projects.${props.project.id}`);
+});
 
 // ── Filters ────────────────────────────────────────────────────────────────────
 const filteredTasks = computed(() => {
