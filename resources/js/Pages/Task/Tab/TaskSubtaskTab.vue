@@ -112,7 +112,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import { toast } from '@/Utils/toast';
 import { handleAxiosError } from '@/Utils/handleAxiosError';
@@ -167,7 +167,19 @@ const fetchSubtasks = async () => {
     }
 };
 
-onMounted(fetchSubtasks);
+// onMounted(fetchSubtasks);
+onMounted(() => {
+    fetchSubtasks();
+    window.Echo.private(`tasks.${props.task.id}`)
+        .listen('.SubtaskCreated', (e:any) => {
+            fetchSubtasks();
+            emit('updated');
+        });
+});
+
+onUnmounted(() => {
+    window.Echo.leave(`tasks.${props.task.id}`);
+});
 
 const onSubtaskCreated = () => {
     showCreateSubtaskModal.value = false;

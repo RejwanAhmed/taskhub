@@ -9,3 +9,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('projects.{project_id}', function ($user, $projectId) {
     return $user->projects()->where('project_id', $projectId)->exists();
 });
+
+Broadcast::channel('tasks.{task_id}', function ($user, $taskId) {
+    return $user->projects()->whereRelation('tasks', 'id', $taskId)->exists();
+});
