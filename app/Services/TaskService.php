@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\Task\SubtaskCreated;
 use App\Events\Task\TaskCreated;
 use App\Exceptions\BusinessException;
 use App\Models\Project;
@@ -112,6 +113,7 @@ class TaskService
         ];
 
         $this->taskRepo->createTask($validatedData);
+        broadcast(new SubtaskCreated($parentTask->id))->toOthers();
         
     }
 
