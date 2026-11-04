@@ -172,7 +172,7 @@ onMounted(() => {
     fetchSubtasks();
     window.Echo.private(`tasks.${props.task.id}`)
         .listen('.SubtaskCreated', (e:any) => {
-            fetchSubtasks();
+            subtasks.value.push(e.subtask);
             emit('updated');
         });
 });

@@ -161,8 +161,7 @@ onMounted(() => {
     fetchTasks();
     window.Echo.private(`projects.${props.project.id}`)
         .listen('.TaskCreated', (e: any) => {
-            console.log('TaskCreated received', e);
-            fetchTasks();
+            tasks.value.push(e.task);
         });
 });
 

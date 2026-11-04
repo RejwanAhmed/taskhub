@@ -112,9 +112,9 @@ class TaskService
             'created_by'      => $user->id,
         ];
 
-        $this->taskRepo->createTask($validatedData);
-        broadcast(new SubtaskCreated($parentTask->id))->toOthers();
-        
+        $subtask = $this->taskRepo->createTask($validatedData);
+        $subtaskDetails = $this->taskRepo->getTaskDetails($subtask);
+        broadcast(new SubtaskCreated($subtaskDetails, $parentTask->id))->toOthers();
     }
 
     public function reorderTask(Project $project, int $orgId, array $validatadData): void
