@@ -163,7 +163,7 @@ const buildColumnTasks = () => {
     columnTasks.value = map;
 };
 
-watch(() => props.tasks, buildColumnTasks, { immediate: true });
+watch(() => props.tasks, buildColumnTasks, { immediate: true, deep:true });
 
 
 const onDragEnd = (evt: any) => {
