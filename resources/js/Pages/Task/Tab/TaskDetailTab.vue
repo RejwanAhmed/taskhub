@@ -122,6 +122,7 @@ import { Task } from '@/types/interfaces/task';
 import { Project } from '@/types/interfaces/project';
 import { Tag } from '@/types/interfaces/tag';
 import { TaskType } from '@/types/interfaces/taskType';
+import { formatDateForInput } from '@/Utils/taskHelpers';
 
 
 const props = defineProps<{
@@ -147,7 +148,7 @@ const form = reactive({
     priority:        props.task.priority,
     task_type_id:    props.task.task_type_id ?? null,
     assigned_to:     props.task.assigned_to ?? null,
-    due_date:        props.task.due_date ?? '',
+    due_date:        formatDateForInput(props.task.due_date),
     estimated_hours: props.task.estimated_hours ?? null,
     tags:            props.task.tags?.map(t => t.id) ?? [],
 });

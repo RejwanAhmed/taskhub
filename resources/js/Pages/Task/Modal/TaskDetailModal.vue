@@ -62,6 +62,7 @@
                     <!-- Tab content -->
                     <TaskDetailTab
                         v-if="activeTab === 'details'"
+                        :key="task.updated_at"
                         :task="task"
                         :project="project"
                         :tags="tags"

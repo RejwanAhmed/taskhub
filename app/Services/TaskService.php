@@ -3,7 +3,11 @@
 namespace App\Services;
 
 use App\Events\Task\SubtaskCreated;
+use App\Events\Task\SubtaskDeleted;
+use App\Events\Task\SubtaskUpdated;
 use App\Events\Task\TaskCreated;
+use App\Events\Task\TaskDeleted;
+use App\Events\Task\TaskUpdated;
 use App\Exceptions\BusinessException;
 use App\Models\Project;
 use App\Models\Task;
@@ -70,6 +74,12 @@ class TaskService
 
             $this->taskRepo->updateTask($task, $data);
             $this->taskRepo->syncTags($task, $tagIds);
+
+            $taskDetails = $this->taskRepo->getTaskDetails($task);
+            if ($task->parent_task_id)
+                broadcast(new SubtaskUpdated($taskDetails, $task->parent_task_id))->toOthers();
+            else 
+                broadcast(new TaskUpdated($taskDetails))->toOthers();
         });
     }
 
@@ -80,7 +90,17 @@ class TaskService
         else if ($task->project_id !== $project->id)
             throw new BusinessException('This task does not belong to this project.');
 
+        $taskId    = $task->id;
+        $projectId = $task->project_id;
+        $parentTaskId = $task->parent_task_id;
+
         $this->taskRepo->deleteTask($task);
+
+        if ($parentTaskId) {
+            broadcast(new SubtaskDeleted($taskId, $parentTaskId))->toOthers();
+        } else {
+            broadcast(new TaskDeleted($taskId, $projectId))->toOthers();
+        }
     }
 
     public function getSubtasks(Task $task): Collection

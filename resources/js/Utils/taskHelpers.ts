@@ -11,3 +11,8 @@ export const priorityClass = (p: string)  => ({
     high:   'bg-warning bg-opacity-10 text-warning',
     urgent: 'bg-danger bg-opacity-10 text-danger',
 }[p] ?? '');
+
+export const formatDateForInput = (date: string | null): string => {
+    if (!date) return '';
+    return date.split('T')[0];
+};
