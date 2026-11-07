@@ -112,13 +112,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
-import { toast } from '@/Utils/toast';
-import { handleAxiosError } from '@/Utils/handleAxiosError';
-import SubmitButton from '@/Components/Button/SubmitButton.vue';
 import DeleteConfirmationButton from '@/Components/Button/DeleteConfirmationButton.vue';
-import RichTextEditor from '@/Components/Editor/RichTextEditor.vue';
 import TaskDetailModal from '@/Pages/Task/Modal/TaskDetailModal.vue';
 import { Task } from '@/types/interfaces/task';
 import { Project } from '@/types/interfaces/project';
@@ -173,6 +169,16 @@ onMounted(() => {
     window.Echo.private(`tasks.${props.task.id}`)
         .listen('.SubtaskCreated', (e:any) => {
             subtasks.value.push(e.subtask);
+            emit('updated');
+        })
+        .listen('.SubtaskUpdated', (e: any) => {
+            const idx = subtasks.value.findIndex(s => s.id === e.subtask.id);
+            if (idx !== -1) {
+                subtasks.value.splice(idx, 1, e.subtask);
+            }
+        })
+        .listen('.SubtaskDeleted', (e: any) => {
+            subtasks.value = subtasks.value.filter(s => s.id !== e.subtaskId);
             emit('updated');
         });
 });
