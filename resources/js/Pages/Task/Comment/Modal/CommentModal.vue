@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, computed } from 'vue';
+import { ref, onMounted, onUnmounted, reactive, computed } from 'vue';
 import axios from 'axios';
 import { Task } from '@/types/interfaces/task';
 import { Comment } from '@/types/interfaces/comment';
@@ -204,5 +204,27 @@ const fetchComments = async () => {
     }
 };
 
-onMounted(fetchComments);
+// onMounted(fetchComments);
+onMounted(() => {
+    fetchComments();
+    window.Echo.private(`tasks.${props.task.id}`)
+        .listen('.CommentCreated', (e: any) => {
+            comments.value.push(e.comment);
+        })
+        .listen('.CommentUpdated', (e: any) => {
+            const idx = comments.value.findIndex(c => c.id === e.comment.id);
+            if (idx !== -1)
+                comments.value.splice(idx, 1, e.comment);
+        })
+        .listen('.CommentDeleted', (e: any) => {
+            comments.value = comments.value.filter(c => c.id !== e.commentId);
+        });
+});
+
+onUnmounted(() => {
+     window.Echo.private(`tasks.${props.task.id}`)
+        .stopListening('.CommentCreated')
+        .stopListening('.CommentUpdated')
+        .stopListening('.CommentDeleted');
+});
 </script>
