@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, onUnmounted, computed } from 'vue';
 import axios from 'axios';
 import { usePage } from '@inertiajs/vue3';
 import { Task } from '@/types/interfaces/task';
@@ -146,7 +146,23 @@ const fetchAttachments = async () => {
     }
 };
 
-onMounted(fetchAttachments);
+// onMounted(fetchAttachments);
+onMounted(() => {
+    fetchAttachments();
+    window.Echo.private(`tasks.${props.task.id}`)
+        .listen('.AttachmentCreated', (e: any) => {
+            attachments.value.push(e.attachment);
+        })
+        .listen('.AttachmentDeleted', (e: any) => {
+            attachments.value = attachments.value.filter(a => a.id !== e.attachmentId);
+        });
+});
+
+onUnmounted(() => {
+    window.Echo.private(`tasks.${props.task.id}`)
+        .stopListening('.AttachmentCreated')
+        .stopListening('.AttachmentDeleted');
+});
 
 // ── File selection ─────────────────────────────────────────────────────────────
 const onFileSelect = (e: Event) => {
