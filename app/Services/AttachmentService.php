@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Events\Attachment\AttachmentCreated;
+use App\Events\Attachment\AttachmentDeleted;
 use App\Exceptions\BusinessException;
 use App\Models\Attachment;
 use App\Models\Comment;
+use App\Models\Task;
 use App\Models\User;
 use App\Repositories\Contracts\AttachmentRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +45,13 @@ class AttachmentService
             'file_size'       => $file->getSize(),
             'mime_type'       => $file->getMimeType(),
         ];
-        return $this->attachmentRepo->storeAttachment($data);
+
+        $attachment = $this->attachmentRepo->storeAttachment($data);
+        // only broadcast for task attachments
+        if ($attachable instanceof Task) {
+            broadcast(new AttachmentCreated($attachment, $attachable->id))->toOthers();
+        }
+        return $attachment;
     }
 
     public function deleteAttachment(Attachment $attachment, User $user): void
@@ -50,8 +59,16 @@ class AttachmentService
         if ($attachment->user_id !== $user->id)
             throw new BusinessException('You are not authorized to delete this attachment.');
 
+        $attachmentId  = $attachment->id;
+        $attachableId  = $attachment->attachable_id;
+        $attachableType = $attachment->attachable_type;
+        
         Storage::disk('public')->delete($attachment->file_path);
         $this->attachmentRepo->deleteAttachment($attachment);
+
+        if ($attachableType === Task::class) {
+            broadcast(new AttachmentDeleted($attachmentId, $attachableId))->toOthers();
+        }
     }
 
     public function getCommentAttachment(Comment $comment, array $ids)
