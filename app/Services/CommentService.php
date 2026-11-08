@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Events\Comment\CommentCreated;
+use App\Events\Comment\CommentDeleted;
+use App\Events\Comment\CommentUpdated;
 use App\Exceptions\BusinessException;
 use App\Models\Comment;
 use App\Models\Task;
@@ -44,6 +47,8 @@ class CommentService
                 $this->attachmentService->storeAttachment($comment, $user, $file);
             }
             
+            $comment->load(['user:id,name', 'attachments']);
+            broadcast(new CommentCreated($comment, $task->id))->toOthers();
             return $comment;
         });
         
@@ -80,6 +85,9 @@ class CommentService
             foreach ($newFiles as $file) {
                 $this->attachmentService->storeAttachment($comment, $user, $file);
             }
+
+            $comment->load(['user:id,name', 'attachments']);
+            broadcast(new CommentUpdated($comment, $comment->commentable_id))->toOthers();
         });
     }
 
@@ -88,6 +96,11 @@ class CommentService
         if ($comment->user_id !== $user->id)
             throw new BusinessException('You are not authorized to delete this comment.');
 
+        $commentId = $comment->id;
+        $taskId    = $comment->commentable_id;
+
         $this->commentRepo->deleteComment($comment);
+
+        broadcast(new CommentDeleted($commentId, $taskId))->toOthers();
     }
 }

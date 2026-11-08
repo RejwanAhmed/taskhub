@@ -40,7 +40,6 @@ class CommentController extends Controller
         try {
             $validatedData = $request->validated();
             $comment = $this->commentService->createComment($task, auth()->user(), $validatedData);
-            $comment->load(['user:id,name', 'attachments']);
             $message = 'Comment added successfully';
             $responseData = [
                 'comment'   => $comment,
