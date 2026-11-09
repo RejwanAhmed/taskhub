@@ -136,13 +136,15 @@ const fileInput     = ref<HTMLInputElement | null>(null);
 const formErrors    = reactive<Record<string, string>>({});
 
 // ── Fetch ──────────────────────────────────────────────────────────────────────
-const fetchAttachments = async () => {
-    loading.value = true;
+const fetchAttachments = async (silent = false) => {
+    if (!silent)
+        loading.value = true;
     try {
         const { data } = await axios.get(route('tasks.attachments.index', props.task.id));
         attachments.value = data.attachments;
     } finally {
-        loading.value = false;
+        if (!silent)
+            loading.value = false;
     }
 };
 
@@ -150,12 +152,8 @@ const fetchAttachments = async () => {
 onMounted(() => {
     fetchAttachments();
     window.Echo.private(`tasks.${props.task.id}`)
-        .listen('.AttachmentCreated', (e: any) => {
-            attachments.value.push(e.attachment);
-        })
-        .listen('.AttachmentDeleted', (e: any) => {
-            attachments.value = attachments.value.filter(a => a.id !== e.attachmentId);
-        });
+        .listen('.AttachmentCreated', () => (fetchAttachments(true)))
+        .listen('.AttachmentDeleted', () => (fetchAttachments(true)));
 });
 
 onUnmounted(() => {

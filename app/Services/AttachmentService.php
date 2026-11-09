@@ -49,7 +49,7 @@ class AttachmentService
         $attachment = $this->attachmentRepo->storeAttachment($data);
         // only broadcast for task attachments
         if ($attachable instanceof Task) {
-            broadcast(new AttachmentCreated($attachment, $attachable->id))->toOthers();
+            broadcast(new AttachmentCreated($attachable->id))->toOthers();
         }
         return $attachment;
     }
@@ -67,7 +67,7 @@ class AttachmentService
         $this->attachmentRepo->deleteAttachment($attachment);
 
         if ($attachableType === Task::class) {
-            broadcast(new AttachmentDeleted($attachmentId, $attachableId))->toOthers();
+            broadcast(new AttachmentDeleted($attachableId))->toOthers();
         }
     }
 

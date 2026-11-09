@@ -2,7 +2,6 @@
 
 namespace App\Events\Comment;
 
-use App\Models\Comment;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -16,7 +15,7 @@ class CommentCreated implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public Comment $comment, public int $taskId)
+    public function __construct(public int $taskId)
     {
         //
     }
@@ -36,13 +35,6 @@ class CommentCreated implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('tasks.' . $this->taskId),
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'comment' => $this->comment,
         ];
     }
 }

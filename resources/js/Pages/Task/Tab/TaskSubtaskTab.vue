@@ -153,13 +153,15 @@ const statusColor = (status: string) => ({
 }[status] ?? '#6B7280');
 
 // ── Fetch subtasks ─────────────────────────────────────────────────────────────
-const fetchSubtasks = async () => {
-    loading.value = true;
+const fetchSubtasks = async (silent = false) => {
+    if (!silent)
+        loading.value = true;
     try {
         const { data } = await axios.get(route('projects.tasks.subtasks.index', [props.project.id, props.task.id]));
         subtasks.value = data.subtasks;
     } finally {
-        loading.value = false;
+        if (!silent)
+            loading.value = false;
     }
 };
 
@@ -167,20 +169,17 @@ const fetchSubtasks = async () => {
 onMounted(() => {
     fetchSubtasks();
     window.Echo.private(`tasks.${props.task.id}`)
-        .listen('.SubtaskCreated', (e:any) => {
-            subtasks.value.push(e.subtask);
-            emit('updated');
+        .listen('.SubtaskCreated', () => {
+            fetchSubtasks(true); 
+            emit('updated')
         })
-        .listen('.SubtaskUpdated', (e: any) => {
-            const idx = subtasks.value.findIndex(s => s.id === e.subtask.id);
-            if (idx !== -1) {
-                subtasks.value.splice(idx, 1, e.subtask);
-            }
+        .listen('.SubtaskUpdated', () => {
+            fetchSubtasks(true);
         })
-        .listen('.SubtaskDeleted', (e: any) => {
-            subtasks.value = subtasks.value.filter(s => s.id !== e.subtaskId);
-            emit('updated');
-        });
+        .listen('.SubtaskDeleted', () => {
+            fetchSubtasks(true); 
+            emit('updated')
+        })
 });
 
 onUnmounted(() => {

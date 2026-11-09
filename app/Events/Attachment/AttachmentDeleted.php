@@ -15,7 +15,7 @@ class AttachmentDeleted implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public int $attachmentId, public int $taskId)
+    public function __construct(public int $taskId)
     {
         //
     }
@@ -34,13 +34,6 @@ class AttachmentDeleted implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('tasks.' . $this->taskId),
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'attachmentId' => $this->attachmentId,
         ];
     }
 }
