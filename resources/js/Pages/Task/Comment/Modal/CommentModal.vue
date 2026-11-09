@@ -194,13 +194,15 @@ const onCommentDeleted = (commentId: number) => {
     emit('updated');
 };
 
-const fetchComments = async () => {
-    loading.value = true;
+const fetchComments = async (silent = false) => {
+    if (!silent)
+        loading.value = true;
     try {
         const { data } = await axios.get(route('tasks.comments.index', props.task.id));
         comments.value = data.comments;
     } finally {
-        loading.value = false;
+        if (!silent)
+            loading.value = false;
     }
 };
 
@@ -208,17 +210,9 @@ const fetchComments = async () => {
 onMounted(() => {
     fetchComments();
     window.Echo.private(`tasks.${props.task.id}`)
-        .listen('.CommentCreated', (e: any) => {
-            comments.value.push(e.comment);
-        })
-        .listen('.CommentUpdated', (e: any) => {
-            const idx = comments.value.findIndex(c => c.id === e.comment.id);
-            if (idx !== -1)
-                comments.value.splice(idx, 1, e.comment);
-        })
-        .listen('.CommentDeleted', (e: any) => {
-            comments.value = comments.value.filter(c => c.id !== e.commentId);
-        });
+        .listen('.CommentCreated', () => (fetchComments(true)))
+        .listen('.CommentUpdated', () => (fetchComments(true)))
+        .listen('.CommentDeleted', () => (fetchComments(true)))
 });
 
 onUnmounted(() => {

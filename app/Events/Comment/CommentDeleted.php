@@ -16,7 +16,7 @@ class CommentDeleted implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public int $commentId, public int $taskId)
+    public function __construct(public int $taskId)
     {
         //
     }
@@ -36,13 +36,6 @@ class CommentDeleted implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('tasks.' . $this->taskId),
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'commentId' => $this->commentId,
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Events\Attachment;
 
-use App\Models\Attachment;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -17,7 +16,7 @@ class AttachmentCreated implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public Attachment $attachment, public int $taskId)
+    public function __construct(public int $taskId)
     {
         //
     }
@@ -37,13 +36,6 @@ class AttachmentCreated implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('tasks.' . $this->taskId),
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'attachment' => $this->attachment,
         ];
     }
 }

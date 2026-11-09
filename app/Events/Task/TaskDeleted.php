@@ -15,7 +15,7 @@ class TaskDeleted implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public int $taskId, public int $projectId)
+    public function __construct(public int $projectId)
     {
         //
     }
@@ -35,13 +35,6 @@ class TaskDeleted implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('projects.' . $this->projectId),
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'taskId' => $this->taskId,
         ];
     }
 }

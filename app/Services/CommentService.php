@@ -48,7 +48,7 @@ class CommentService
             }
             
             $comment->load(['user:id,name', 'attachments']);
-            broadcast(new CommentCreated($comment, $task->id))->toOthers();
+            broadcast(new CommentCreated($task->id))->toOthers();
             return $comment;
         });
         
@@ -87,7 +87,7 @@ class CommentService
             }
 
             $comment->load(['user:id,name', 'attachments']);
-            broadcast(new CommentUpdated($comment, $comment->commentable_id))->toOthers();
+            broadcast(new CommentUpdated($comment->commentable_id))->toOthers();
         });
     }
 
@@ -101,6 +101,6 @@ class CommentService
 
         $this->commentRepo->deleteComment($comment);
 
-        broadcast(new CommentDeleted($commentId, $taskId))->toOthers();
+        broadcast(new CommentDeleted($taskId))->toOthers();
     }
 }

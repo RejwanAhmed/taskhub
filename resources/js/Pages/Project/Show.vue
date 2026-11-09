@@ -137,8 +137,9 @@ const columns = [
 ];
 
 // ── Fetch tasks ────────────────────────────────────────────────────────────────
-const fetchTasks = async () => {
-    loading.value = true;
+const fetchTasks = async (silent = false) => {
+    if (!silent)
+        loading.value = true;
     try {
         const { data } = await axios.get(route('projects.tasks.index', props.project.id));
         tasks.value = data.tasks;
@@ -148,7 +149,8 @@ const fetchTasks = async () => {
             if (updated) selectedTask.value = updated;
         }
     } finally {
-        loading.value = false;
+        if (!silent)
+            loading.value = false;
     }
 };
 
@@ -160,23 +162,11 @@ const openTaskModal = (task: Task) => {
 onMounted(() => {
     fetchTasks();
     window.Echo.private(`projects.${props.project.id}`)
-        .listen('.TaskCreated', (e: any) => {
-            tasks.value.push(e.task);
-        })
-        .listen('.TaskUpdated', (e: any) => {
-            const idx = tasks.value.findIndex(t => t.id === e.task.id);
-            if (idx !== -1)
-                tasks.value.splice(idx, 1, e.task);
-
-            if (selectedTask.value && selectedTask.value.id === e.task.id)
-                selectedTask.value = e.task;
-        })
-        .listen('.TaskDeleted', (e: any) => {
-            tasks.value = tasks.value.filter(t => t.id !== e.taskId);
-            if (selectedTask.value?.id === e.taskId) {
-                selectedTask.value = null;
-            }
-        });
+        .listen('.TaskCreated', () => fetchTasks(true))
+        .listen('.TaskUpdated', () => fetchTasks(true))
+        .listen('.TaskDeleted', () => fetchTasks(true))
+        .listen('.TaskReordered', () => fetchTasks(true));
+        
 });
 
 onUnmounted(() => {

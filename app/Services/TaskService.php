@@ -7,6 +7,7 @@ use App\Events\Task\SubtaskDeleted;
 use App\Events\Task\SubtaskUpdated;
 use App\Events\Task\TaskCreated;
 use App\Events\Task\TaskDeleted;
+use App\Events\Task\TaskReordered;
 use App\Events\Task\TaskUpdated;
 use App\Exceptions\BusinessException;
 use App\Models\Project;
@@ -56,8 +57,7 @@ class TaskService
             if (!empty($tagIds))
                 $this->taskRepo->syncTags($task, $tagIds);
 
-            $taskDetails = $this->taskRepo->getTaskDetails($task);
-            broadcast(new TaskCreated($taskDetails))->toOthers();
+            broadcast(new TaskCreated($project->id))->toOthers();
         });
     }
 
@@ -75,11 +75,10 @@ class TaskService
             $this->taskRepo->updateTask($task, $data);
             $this->taskRepo->syncTags($task, $tagIds);
 
-            $taskDetails = $this->taskRepo->getTaskDetails($task);
             if ($task->parent_task_id)
-                broadcast(new SubtaskUpdated($taskDetails, $task->parent_task_id))->toOthers();
+                broadcast(new SubtaskUpdated($task->parent_task_id))->toOthers();
             else 
-                broadcast(new TaskUpdated($taskDetails))->toOthers();
+                broadcast(new TaskUpdated($project->id))->toOthers();
         });
     }
 
@@ -97,9 +96,9 @@ class TaskService
         $this->taskRepo->deleteTask($task);
 
         if ($parentTaskId) {
-            broadcast(new SubtaskDeleted($taskId, $parentTaskId))->toOthers();
+            broadcast(new SubtaskDeleted($parentTaskId))->toOthers();
         } else {
-            broadcast(new TaskDeleted($taskId, $projectId))->toOthers();
+            broadcast(new TaskDeleted($projectId))->toOthers();
         }
     }
 
@@ -133,8 +132,7 @@ class TaskService
         ];
 
         $subtask = $this->taskRepo->createTask($validatedData);
-        $subtaskDetails = $this->taskRepo->getTaskDetails($subtask);
-        broadcast(new SubtaskCreated($subtaskDetails, $parentTask->id))->toOthers();
+        broadcast(new SubtaskCreated($parentTask->id))->toOthers();
     }
 
     public function reorderTask(Project $project, int $orgId, array $validatadData): void
@@ -156,9 +154,10 @@ class TaskService
             $tasksInColumn->splice($position, 0, [$task]);
   
             foreach ($tasksInColumn as $index => $t) {
-                \Log::info($index);
                 $this->taskRepo->reorderTask($t, $status, $index);
             }
+            broadcast(new TaskReordered($project->id))->toOthers();
+
         });
     }
 }

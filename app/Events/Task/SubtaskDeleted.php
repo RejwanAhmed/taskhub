@@ -15,7 +15,7 @@ class SubtaskDeleted implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public int $subtaskId, public int $parentTaskId)
+    public function __construct(public int $parentTaskId)
     {
         //
     }
@@ -34,13 +34,6 @@ class SubtaskDeleted implements ShouldBroadcastNow
     {
         return [
             new PrivateChannel('tasks.' . $this->parentTaskId),
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'subtaskId' => $this->subtaskId,
         ];
     }
 }

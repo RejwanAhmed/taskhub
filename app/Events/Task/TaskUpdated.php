@@ -2,7 +2,6 @@
 
 namespace App\Events\Task;
 
-use App\Models\Task;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -16,7 +15,7 @@ class TaskUpdated implements ShouldBroadcastNow
     /**
      * Create a new event instance.
      */
-    public function __construct(public Task $task)
+    public function __construct(public int $projectId)
     {
         //
     }
@@ -35,14 +34,7 @@ class TaskUpdated implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('projects.' . $this->task->project_id),
-        ];
-    }
-
-    public function broadcastWith(): array
-    {
-        return [
-            'task' => $this->task,
+            new PrivateChannel('projects.' . $this->projectId),
         ];
     }
 }
